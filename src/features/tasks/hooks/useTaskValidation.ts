@@ -1,23 +1,24 @@
 import { useState } from "react";
 import type { Task, ValidationError } from "../../../types";
+import { VALIDATION_MESSAGES } from "../../../utils/constants";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const useTaskValidation = () => {
+ 
+export const useTaskValidation = () => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
   
   const validateTask = (task: Partial<Task>) => {
     const foundErrors = [];
     if (!task.name?.trim()) {
-      foundErrors.push({ field: 'name', message: 'Task name is required' });
+      foundErrors.push({ field: 'name', message: VALIDATION_MESSAGES.TASK_NAME_REQUIRED });
     }
     if (!task.startDate) {
-      foundErrors.push({ field: 'startDate', message: 'Start date is required' });
+      foundErrors.push({ field: 'startDate', message: VALIDATION_MESSAGES.START_DATE_REQUIRED });
     }
     if (!task.endDate) {
-      foundErrors.push({ field: 'endDate', message: 'End date is required' });
+      foundErrors.push({ field: 'endDate', message: VALIDATION_MESSAGES.END_DATE_REQUIRED });
     }
     if (task.startDate && task.endDate && task.startDate > task.endDate) {
-      foundErrors.push({ field: 'endDate', message: 'End date must be after start date' });
+      foundErrors.push({ field: 'endDate', message: VALIDATION_MESSAGES.END_DATE_BEFORE_START });
     }
     
     setErrors(foundErrors);
