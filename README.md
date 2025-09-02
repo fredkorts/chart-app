@@ -1,69 +1,41 @@
-# React + TypeScript + Vite
+# Chart App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## Project Overview
 
-Currently, two official plugins are available:
+This project is a React + TypeScript task management dashboard that allows users to easily plan, visualize, and manage their work on a quarterly timeline. The application provides a clear, interactive chart where tasks are displayed as horizontal bars, making it simple to see schedules, overlaps, and deadlines at a glance.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Core Features
 
-## Expanding the ESLint configuration
+**Add New Tasks** – Users can create tasks with a name, start date, and end date. Input validation ensures correct formatting (DD.MM.YYYY) and logical date ranges.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+**Interactive Timeline** – Tasks are shown on a responsive timeline with unique colors for quick identification. Users can view by quarter, with partial bars displayed for tasks that span multiple periods.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+**Quarter Navigation** – Simple arrow controls allow switching between previous and next quarters, updating the chart and visible tasks accordingly.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+**Task Details** – Clicking on a task opens a modal with detailed information.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Responsive Design** – Optimized for both desktop and mobile. On smaller screens, form fields stack vertically and the timeline scrolls horizontally for easy access.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## User Experience
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+The app is designed to feel like:
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+- A visual calendar for projects
+- A simple task tracker
+- A timeline tool for scheduling and planning
+
+## Benefits
+
+**Quick Overview** – See what's happening this quarter at a glance.
+
+**Easy Planning** – Identify available time slots for new work.
+
+**Visual Clarity** – Instantly spot overlapping or extended tasks.
+
+**Lightweight Management** – Add and track tasks in seconds.
+
+## Example Use Cases
+
+**Project Managers** can outline milestones per quarter, review progress in meetings, and prepare for upcoming phases.
+
+**Freelancers** can track multiple client projects, distinguish them by color, and evaluate availability before taking on new work.
