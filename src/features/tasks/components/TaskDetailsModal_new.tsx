@@ -45,51 +45,56 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   };
 
   // Handle edit task
-  const handleEditTask = async (updatedTaskData: Omit<Task, 'id'>) => {
-    if (!task || !onEdit) return;
+const handleEditTask = async (updatedTaskData: Omit<Task, 'id'>) => {
+  if (!task || !onEdit) return;
 
-    setIsLoading(true);
-    setError(null);
+  setIsLoading(true);
+  setError(null);
 
-    try {
-      const result = await onEdit(task.id, updatedTaskData);
-      
-      if (result.success) {
-        setMode('view');
-      } else if (result.errors) {
-        // Let the form handle validation errors
-        setError(VALIDATION_MESSAGES.VALIDATION_FAILED);
-      } else {
-        setError(VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
-    } finally {
-      setIsLoading(false);
+  try {
+    const result = await onEdit(task.id, updatedTaskData);
+    
+    if (result.success) {
+      setMode('view');
+    } else if (result.errors) {
+      // Handle validation errors - you can either show a general message
+      // or extract specific error messages from result.errors
+      const errorMessages = Object.values(result.errors).join(', ');
+      setError(errorMessages || VALIDATION_MESSAGES.VALIDATION_FAILED);
+    } else {
+      setError(VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
     }
-  };
+  } catch (err) {
+    setError(err instanceof Error ? err.message : VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Handle delete task
-  const handleDeleteTask = async () => {
-    if (!task || !onDelete) return;
+const handleDeleteTask = async () => {
+  if (!task || !onDelete) return;
 
-    setIsLoading(true);
-    setError(null);
+  setIsLoading(true);
+  setError(null);
 
-    try {
-      const result = await onDelete(task.id);
-      
-      if (result.success) {
-        onClose();
-      } else {
-        setError(VALIDATION_MESSAGES.DELETE_TASK_FAILED);
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : VALIDATION_MESSAGES.DELETE_TASK_FAILED);
-    } finally {
-      setIsLoading(false);
+  try {
+    const result = await onDelete(task.id);
+    
+    if (result.success) {
+      onClose();
+    } else if (result.error) {
+      // Handle single error message from delete operation
+      setError(result.error);
+    } else {
+      setError(VALIDATION_MESSAGES.DELETE_TASK_FAILED);
     }
-  };
+  } catch (err) {
+    setError(err instanceof Error ? err.message : VALIDATION_MESSAGES.DELETE_TASK_FAILED);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Convert Task to TaskFormData for editing
   const getTaskFormData = () => {

@@ -2,35 +2,9 @@ import React, { useState } from 'react';
 import type { Task, TaskFormData } from '../../../types';
 import { parseEstonianDate } from '../../../utils/dateUtils';
 import { getTaskColor, VALIDATION_MESSAGES } from '../../../utils/constants';
-
-// Local validation errors interface (using simple field names for form validation)
-interface ValidationErrors {
-  name?: string;
-  startDateStr?: string;
-  endDateStr?: string;
-  general?: string;
-}
-
-// Props interface
-interface TaskFormProps {
-  onSubmit: (task: Omit<Task, 'id'>) => void;
-  initialData?: TaskFormData;
-  submitLabel?: string;
-  onCancel?: () => void;
-}
-
-// Estonian date validation utility
-const validateEstonianDate = (dateStr: string): boolean => {
-  const regex = /^\d{2}\.\d{2}\.\d{4}$/;
-  if (!regex.test(dateStr)) return false;
-  
-  const [day, month, year] = dateStr.split('.').map(Number);
-  const date = new Date(year, month - 1, day);
-  
-  return date.getFullYear() === year && 
-         date.getMonth() === month - 1 && 
-         date.getDate() === day;
-};
+import { useTaskValidation } from '../hooks/useTaskValidation';
+import { Button, Input, ErrorDisplay } from '../../../components';
+import type { TaskFormProps, TaskValidationErrors } from '../types/tasks.types';
 
 export const TaskForm: React.FC<TaskFormProps> = ({
   onSubmit,
@@ -39,12 +13,14 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   onCancel
 }) => {
   const [formData, setFormData] = useState<TaskFormData>(initialData);
-  const [errors, setErrors] = useState<ValidationErrors>({});
+  const [errors, setErrors] = useState<TaskValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Validation function
-  const validateForm = (data: TaskFormData): ValidationErrors => {
-    const newErrors: ValidationErrors = {};
+  const { validateEstonianDate } = useTaskValidation();
+
+  // Local validation function for form-specific validation
+  const validateForm = (data: TaskFormData): TaskValidationErrors => {
+    const newErrors: TaskValidationErrors = {};
 
     // Task name validation
     if (!data.name.trim()) {
@@ -103,7 +79,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     
     // Clear error for this field when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors((prev: TaskValidationErrors) => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -150,101 +126,74 @@ export const TaskForm: React.FC<TaskFormProps> = ({
     <form onSubmit={handleSubmit} className="task-form">
       {/* General error display */}
       {errors.general && (
-        <div className="error-message general-error" role="alert">
-          {errors.general}
-        </div>
+        <ErrorDisplay 
+          errors={[{ field: 'general', message: errors.general }]} 
+          language="et"
+        />
       )}
 
       <div className="form-fields">
         {/* Task Name Field */}
-        <div className="field-group">
-          <label htmlFor="taskName" className="field-label">
-            Task Name
-          </label>
-          <input
-            id="taskName"
-            type="text"
-            value={formData.name}
-            onChange={handleInputChange('name')}
-            placeholder="Enter task name"
-            className={`field-input ${errors.name ? 'error' : ''}`}
-            disabled={isSubmitting}
-            maxLength={100}
-            autoComplete="off"
-          />
-          {errors.name && (
-            <div className="field-error" role="alert">
-              {errors.name}
-            </div>
-          )}
-        </div>
+        <Input
+          id="taskName"
+          label="Ülesande nimi"
+          value={formData.name}
+          onChange={handleInputChange('name')}
+          placeholder="Sisestage ülesande nimi"
+          error={errors.name}
+          disabled={isSubmitting}
+          maxLength={100}
+          autoComplete="off"
+        />
 
         {/* Start Date Field */}
-        <div className="field-group">
-          <label htmlFor="startDate" className="field-label">
-            Start Date
-          </label>
-          <input
-            id="startDate"
-            type="text"
-            value={formData.startDateStr}
-            onChange={handleInputChange('startDateStr')}
-            placeholder="DD.MM.YYYY"
-            className={`field-input ${errors.startDateStr ? 'error' : ''}`}
-            disabled={isSubmitting}
-            pattern="\d{2}\.\d{2}\.\d{4}"
-            autoComplete="off"
-          />
-          {errors.startDateStr && (
-            <div className="field-error" role="alert">
-              {errors.startDateStr}
-            </div>
-          )}
-        </div>
+        <Input
+          id="startDate"
+          label="Alguskuupäev"
+          value={formData.startDateStr}
+          onChange={handleInputChange('startDateStr')}
+          placeholder="PP.KK.AAAA"
+          error={errors.startDateStr}
+          disabled={isSubmitting}
+          pattern="\d{2}\.\d{2}\.\d{4}"
+          autoComplete="off"
+          helperText="Kuupäev formaadis PP.KK.AAAA"
+        />
 
         {/* End Date Field */}
-        <div className="field-group">
-          <label htmlFor="endDate" className="field-label">
-            End Date
-          </label>
-          <input
-            id="endDate"
-            type="text"
-            value={formData.endDateStr}
-            onChange={handleInputChange('endDateStr')}
-            placeholder="DD.MM.YYYY"
-            className={`field-input ${errors.endDateStr ? 'error' : ''}`}
-            disabled={isSubmitting}
-            pattern="\d{2}\.\d{2}\.\d{4}"
-            autoComplete="off"
-          />
-          {errors.endDateStr && (
-            <div className="field-error" role="alert">
-              {errors.endDateStr}
-            </div>
-          )}
-        </div>
+        <Input
+          id="endDate"
+          label="Lõppkuupäev"
+          value={formData.endDateStr}
+          onChange={handleInputChange('endDateStr')}
+          placeholder="PP.KK.AAAA"
+          error={errors.endDateStr}
+          disabled={isSubmitting}
+          pattern="\d{2}\.\d{2}\.\d{4}"
+          autoComplete="off"
+          helperText="Kuupäev formaadis PP.KK.AAAA"
+        />
       </div>
 
       {/* Form Actions */}
       <div className="form-actions">
         {onCancel && (
-          <button
+          <Button
             type="button"
             onClick={onCancel}
-            className="btn btn-secondary"
+            variant="secondary"
             disabled={isSubmitting}
           >
-            Cancel
-          </button>
+            Tühista
+          </Button>
         )}
-        <button
+        <Button
           type="submit"
-          className="btn btn-primary"
+          variant="primary"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Saving...' : submitLabel}
-        </button>
+          {isSubmitting ? 'Salvestamine...' : submitLabel}
+        </Button>
       </div>
     </form>
   );

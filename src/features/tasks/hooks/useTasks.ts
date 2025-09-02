@@ -3,21 +3,16 @@ import type { Task } from '../../../types';
 import { generateTaskId } from '../../../utils/dateUtils';
 import { getTaskColor, VALIDATION_MESSAGES } from '../../../utils/constants';
 import { useTaskValidation } from './useTaskValidation';
+import type { TaskOperationResult, UseTasksOptions } from '../types/tasks.types';
 
-// Local validation errors interface for the addTask function
-interface ValidationErrors {
-  name?: string;
-  startDate?: string;
-  endDate?: string;
-  general?: string;
-}
-
-export const useTasks = () => {
-  const [tasks, setTasks] = useState<Task[]>([]);
+export const useTasks = (options: UseTasksOptions = {}) => {
+  const { initialTasks = [], autoValidate = true } = options;
+  
+  const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
-  const { validateTask } = useTaskValidation();
+  const { validateTask, getFormErrors } = useTaskValidation();
 
   // Computed values
   const taskCount = useMemo(() => tasks.length, [tasks]);
@@ -28,73 +23,48 @@ export const useTasks = () => {
 
   const addTask = useCallback(async (
     taskData: Omit<Task, 'id'>
-  ): Promise<{ success: boolean; task?: Task; errors?: ValidationErrors }> => {
+  ): Promise<TaskOperationResult> => {
     setIsLoading(true);
     setError(null);
 
     try {
-      // Validate task data
-      const isValid = validateTask(taskData);
-      
-      if (!isValid) {
-        return { 
-          success: false, 
-          errors: { general: VALIDATION_MESSAGES.SAVE_TASK_FAILED }
-        };
+      // Validate task data if autoValidate is enabled
+      if (autoValidate) {
+        const isValid = validateTask(taskData);
+        
+        if (!isValid) {
+          return { 
+            success: false, 
+            errors: getFormErrors()
+          };
+        }
       }
 
       // Create new task
       const newTask: Task = {
-        ...taskData,
         id: generateTaskId(),
-        name: taskData.name.trim(),
-        // Ensure color is set
+        name: taskData.name,
+        startDate: taskData.startDate,
+        endDate: taskData.endDate,
         color: taskData.color || getTaskColor()
       };
 
-      // Add to tasks array
-      setTasks(prevTasks => [...prevTasks, newTask]);
-
+      setTasks(prev => [...prev, newTask]);
       return { success: true, task: newTask };
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : VALIDATION_MESSAGES.SAVE_TASK_FAILED;
       setError(errorMessage);
-      return { success: false, errors: { general: errorMessage } };
-    } finally {
-      setIsLoading(false);
-    }
-  }, [validateTask]);
-
-  
-
-  const deleteTask = useCallback(async (taskId: string): Promise<{ success: boolean; error?: string }> => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const taskExists = tasks.some(task => task.id === taskId);
-      
-      if (!taskExists) {
-        return { success: false, error: VALIDATION_MESSAGES.TASK_NOT_FOUND };
-      }
-
-      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
-      return { success: true };
-
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : VALIDATION_MESSAGES.DELETE_TASK_FAILED;
-      setError(errorMessage);
       return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }
-  }, [tasks]);
+  }, [validateTask, getFormErrors, autoValidate]);
 
   const updateTask = useCallback(async (
     taskId: string, 
     updateData: Partial<Omit<Task, 'id'>>
-  ): Promise<{ success: boolean; task?: Task; errors?: ValidationErrors }> => {
+  ): Promise<TaskOperationResult> => {
     setIsLoading(true);
     setError(null);
 
@@ -102,31 +72,33 @@ export const useTasks = () => {
       const existingTask = tasks.find(task => task.id === taskId);
       
       if (!existingTask) {
-        return { success: false, errors: { general: VALIDATION_MESSAGES.TASK_NOT_FOUND } };
-      }
-
-      // Merge existing task with updates
-      const updatedTaskData = { ...existingTask, ...updateData };
-      
-      // Validate updated task
-      const isValid = validateTask(updatedTaskData);
-      
-      if (!isValid) {
         return { 
           success: false, 
-          errors: { general: VALIDATION_MESSAGES.SAVE_TASK_FAILED }
+          error: 'Task not found' 
         };
       }
 
-      // Update task in array
       const updatedTask: Task = {
-        ...updatedTaskData,
-        id: taskId,
-        name: updatedTaskData.name.trim()
+        ...existingTask,
+        ...updateData
       };
 
-      setTasks(prevTasks =>
-        prevTasks.map(task => task.id === taskId ? updatedTask : task)
+      // Validate updated task if autoValidate is enabled
+      if (autoValidate) {
+        const isValid = validateTask(updatedTask);
+        
+        if (!isValid) {
+          return { 
+            success: false, 
+            errors: getFormErrors()
+          };
+        }
+      }
+
+      setTasks(prev => 
+        prev.map(task => 
+          task.id === taskId ? updatedTask : task
+        )
       );
 
       return { success: true, task: updatedTask };
@@ -134,54 +106,75 @@ export const useTasks = () => {
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : VALIDATION_MESSAGES.SAVE_TASK_FAILED;
       setError(errorMessage);
-      return { success: false, errors: { general: errorMessage } };
+      return { success: false, error: errorMessage };
     } finally {
       setIsLoading(false);
     }
-  }, [tasks, validateTask]);
+  }, [tasks, validateTask, getFormErrors, autoValidate]);
 
-  const getTask = useCallback((taskId: string): Task | undefined => {
+  const deleteTask = useCallback(async (taskId: string): Promise<TaskOperationResult> => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const taskExists = tasks.some(task => task.id === taskId);
+      
+      if (!taskExists) {
+        return { 
+          success: false, 
+          error: 'Task not found' 
+        };
+      }
+
+      setTasks(prev => prev.filter(task => task.id !== taskId));
+      return { success: true };
+
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to delete task';
+      setError(errorMessage);
+      return { success: false, error: errorMessage };
+    } finally {
+      setIsLoading(false);
+    }
+  }, [tasks]);
+
+  const getTaskById = useCallback((taskId: string): Task | undefined => {
     return tasks.find(task => task.id === taskId);
   }, [tasks]);
 
-  // Get tasks for a specific quarter
-  const getTasksForQuarter = useCallback((year: number, quarter: number): Task[] => {
-    const quarterStart = new Date(year, (quarter - 1) * 3, 1);
-    const quarterEnd = new Date(year, quarter * 3, 0);
-
-    return tasks.filter(task => {
-      // Task overlaps with quarter if it starts before quarter ends and ends after quarter starts
-      return task.startDate <= quarterEnd && task.endDate >= quarterStart;
-    });
+  const getTasksByDateRange = useCallback((startDate: Date, endDate: Date): Task[] => {
+    return tasks.filter(task => 
+      task.startDate <= endDate && task.endDate >= startDate
+    );
   }, [tasks]);
-
-  const clearTasks = useCallback(() => {
-    setTasks([]);
-  }, []);
 
   const clearError = useCallback(() => {
     setError(null);
   }, []);
 
+  const clearAllTasks = useCallback(() => {
+    setTasks([]);
+  }, []);
+
   return {
     // State
     tasks,
+    taskCount,
+    hasActiveTasks,
     isLoading,
     error,
     
-    // Computed values
-    taskCount,
-    hasActiveTasks,
-    
-    // Actions
+    // Operations
     addTask,
     updateTask,
     deleteTask,
-    getTask,
-    getTasksForQuarter,
-    clearTasks,
     
-    // Utility
-    clearError
+    // Queries
+    getTaskById,
+    getTasksByDateRange,
+    
+    // Utilities
+    clearError,
+    clearAllTasks
   };
 };

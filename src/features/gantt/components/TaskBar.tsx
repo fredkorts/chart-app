@@ -72,15 +72,7 @@
 
 import React from 'react';
 import type { Task } from '../../../types';
-
-export interface TaskBarData extends Task {
-  left: number; // percentage
-  width: number; // percentage
-  row: number;
-  isPartial: boolean;
-  continuesLeft: boolean;
-  continuesRight: boolean;
-}
+import type { TaskBarData } from '../types/gantt.types';
 
 interface TaskBarProps {
   task: TaskBarData;

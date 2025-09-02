@@ -91,19 +91,8 @@
 
 import React, { useState } from 'react';
 import type { Task } from '../../../types';
-import { TaskBar, TaskBarData } from './TaskBar';
-
-export interface MonthInfo {
-  name: string;
-  date: Date;
-  daysInMonth: number;
-}
-
-export interface TimelineData {
-  startDate: Date;
-  endDate: Date;
-  months: MonthInfo[];
-}
+import { TaskBar } from './TaskBar';
+import type { TaskBarData, TimelineData } from '../types/gantt.types';
 
 interface TimelineProps {
   timelineData: TimelineData;

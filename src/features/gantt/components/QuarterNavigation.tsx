@@ -42,7 +42,7 @@
  */
 
 import React, { useCallback } from 'react';
-import { getQuarterInfo } from '../../../utils/dateUtils';
+import { useQuarterNavigation } from '../hooks/useQuarterNavigation';
 
 interface QuarterNavigationProps {
   currentYear: number;
@@ -55,8 +55,8 @@ interface QuarterNavigationProps {
 
 /**
  * Lightweight quarter navigation component with previous/next controls and
- * optional "Today" button. Keyboard navigation is supported via left and right
- * arrow keys when the component is focused.
+ * optional "Today" button. Uses the useQuarterNavigation hook for state management.
+ * Keyboard navigation is supported via left and right arrow keys when focused.
  */
 export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
   currentYear,
@@ -66,45 +66,43 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
   disabled = false,
   className = ''
 }) => {
-  const goToPrevious = useCallback(() => {
-    if (disabled) return;
-    let year = currentYear;
-    let quarter = (currentQuarter - 1) as 1 | 2 | 3 | 4;
-    if (quarter < 1) {
-      quarter = 4;
-      year -= 1;
-    }
-    onQuarterChange(year, quarter);
-  }, [currentYear, currentQuarter, disabled, onQuarterChange]);
+  // Use the hook for navigation logic with the external callback
+  const {
+    goToPrevious,
+    goToNext,
+    goToToday,
+    canGoBack,
+    canGoForward
+  } = useQuarterNavigation(currentYear, currentQuarter, {
+    onNavigate: onQuarterChange
+  });
 
-  const goToNext = useCallback(() => {
-    if (disabled) return;
-    let year = currentYear;
-    let quarter = (currentQuarter + 1) as 1 | 2 | 3 | 4;
-    if (quarter > 4) {
-      quarter = 1;
-      year += 1;
-    }
-    onQuarterChange(year, quarter);
-  }, [currentYear, currentQuarter, disabled, onQuarterChange]);
+  const handlePrevious = useCallback(() => {
+    if (disabled || !canGoBack) return;
+    goToPrevious();
+  }, [disabled, canGoBack, goToPrevious]);
 
-  const goToToday = useCallback(() => {
+  const handleNext = useCallback(() => {
+    if (disabled || !canGoForward) return;
+    goToNext();
+  }, [disabled, canGoForward, goToNext]);
+
+  const handleToday = useCallback(() => {
     if (disabled) return;
-    const { year, quarter } = getQuarterInfo(new Date());
-    onQuarterChange(year, quarter);
-  }, [disabled, onQuarterChange]);
+    goToToday();
+  }, [disabled, goToToday]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
-        goToPrevious();
+        handlePrevious();
       } else if (e.key === 'ArrowRight') {
         e.preventDefault();
-        goToNext();
+        handleNext();
       }
     },
-    [goToPrevious, goToNext]
+    [handlePrevious, handleNext]
   );
 
   return (
@@ -116,8 +114,8 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
       <button
         type="button"
         className="nav-button nav-prev"
-        onClick={goToPrevious}
-        disabled={disabled}
+        onClick={handlePrevious}
+        disabled={disabled || !canGoBack}
         aria-label="Previous quarter"
       >
         &#8249;
@@ -130,8 +128,8 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
       <button
         type="button"
         className="nav-button nav-next"
-        onClick={goToNext}
-        disabled={disabled}
+        onClick={handleNext}
+        disabled={disabled || !canGoForward}
         aria-label="Next quarter"
       >
         &#8250;
@@ -141,7 +139,7 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
         <button
           type="button"
           className="nav-button nav-today"
-          onClick={goToToday}
+          onClick={handleToday}
           disabled={disabled}
         >
           Today
