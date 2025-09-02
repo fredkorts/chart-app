@@ -1,7 +1,7 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { Task } from '../../../types';
-import { generateTaskId } from '../../../utils/dateUtils';
-import { getTaskColor, VALIDATION_MESSAGES } from '../../../utils/constants';
+import type { Task } from '@/types';
+import { generateTaskId } from '@/utils/dateUtils';
+import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
 import { useTaskValidation } from './useTaskValidation';
 import type { TaskOperationResult, UseTasksOptions } from '../types/tasks.types';
 
@@ -9,7 +9,6 @@ export const useTasks = (options: UseTasksOptions = {}) => {
   const { initialTasks = [], autoValidate = true } = options;
   
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
-  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   const { validateTask, getFormErrors } = useTaskValidation();
@@ -24,7 +23,6 @@ export const useTasks = (options: UseTasksOptions = {}) => {
   const addTask = useCallback(async (
     taskData: Omit<Task, 'id'>
   ): Promise<TaskOperationResult> => {
-    setIsLoading(true);
     setError(null);
 
     try {
@@ -56,8 +54,6 @@ export const useTasks = (options: UseTasksOptions = {}) => {
       const errorMessage = err instanceof Error ? err.message : VALIDATION_MESSAGES.SAVE_TASK_FAILED;
       setError(errorMessage);
       return { success: false, error: errorMessage };
-    } finally {
-      setIsLoading(false);
     }
   }, [validateTask, getFormErrors, autoValidate]);
 
@@ -65,7 +61,6 @@ export const useTasks = (options: UseTasksOptions = {}) => {
     taskId: string, 
     updateData: Partial<Omit<Task, 'id'>>
   ): Promise<TaskOperationResult> => {
-    setIsLoading(true);
     setError(null);
 
     try {
@@ -107,13 +102,10 @@ export const useTasks = (options: UseTasksOptions = {}) => {
       const errorMessage = err instanceof Error ? err.message : VALIDATION_MESSAGES.SAVE_TASK_FAILED;
       setError(errorMessage);
       return { success: false, error: errorMessage };
-    } finally {
-      setIsLoading(false);
     }
   }, [tasks, validateTask, getFormErrors, autoValidate]);
 
   const deleteTask = useCallback(async (taskId: string): Promise<TaskOperationResult> => {
-    setIsLoading(true);
     setError(null);
 
     try {
@@ -133,8 +125,6 @@ export const useTasks = (options: UseTasksOptions = {}) => {
       const errorMessage = err instanceof Error ? err.message : 'Failed to delete task';
       setError(errorMessage);
       return { success: false, error: errorMessage };
-    } finally {
-      setIsLoading(false);
     }
   }, [tasks]);
 
@@ -161,7 +151,6 @@ export const useTasks = (options: UseTasksOptions = {}) => {
     tasks,
     taskCount,
     hasActiveTasks,
-    isLoading,
     error,
     
     // Operations
