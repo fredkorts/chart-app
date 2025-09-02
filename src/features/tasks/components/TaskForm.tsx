@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import type { Task, TaskFormData } from '../../../types';
-import { parseEstonianDate } from '../../../utils/dateUtils';
-import { getTaskColor, VALIDATION_MESSAGES } from '../../../utils/constants';
+import type { Task, TaskFormData } from '@/types';
+import { parseEstonianDate } from '@/utils/dateUtils';
+import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
 import { useTaskValidation } from '../hooks/useTaskValidation';
-import { Button, Input, ErrorDisplay } from '../../../components';
+import { Button, Input, ErrorDisplay } from '@/components';
 import type { TaskFormProps, TaskValidationErrors } from '../types/tasks.types';
 
 export const TaskForm: React.FC<TaskFormProps> = ({
@@ -16,59 +16,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
   const [errors, setErrors] = useState<TaskValidationErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { validateEstonianDate } = useTaskValidation();
-
-  // Local validation function for form-specific validation
-  const validateForm = (data: TaskFormData): TaskValidationErrors => {
-    const newErrors: TaskValidationErrors = {};
-
-    // Task name validation
-    if (!data.name.trim()) {
-      newErrors.name = VALIDATION_MESSAGES.TASK_NAME_REQUIRED;
-    } else if (data.name.trim().length < 2) {
-      newErrors.name = VALIDATION_MESSAGES.TASK_NAME_TOO_SHORT;
-    } else if (data.name.trim().length > 100) {
-      newErrors.name = VALIDATION_MESSAGES.TASK_NAME_TOO_LONG;
-    }
-
-    // Start date validation
-    if (!data.startDateStr.trim()) {
-      newErrors.startDateStr = VALIDATION_MESSAGES.START_DATE_REQUIRED;
-    } else if (!validateEstonianDate(data.startDateStr)) {
-      newErrors.startDateStr = VALIDATION_MESSAGES.INVALID_DATE_FORMAT;
-    }
-
-    // End date validation
-    if (!data.endDateStr.trim()) {
-      newErrors.endDateStr = VALIDATION_MESSAGES.END_DATE_REQUIRED;
-    } else if (!validateEstonianDate(data.endDateStr)) {
-      newErrors.endDateStr = VALIDATION_MESSAGES.INVALID_DATE_FORMAT;
-    }
-
-    // Date range validation
-    if (validateEstonianDate(data.startDateStr) && validateEstonianDate(data.endDateStr)) {
-      const startDate = parseEstonianDate(data.startDateStr);
-      const endDate = parseEstonianDate(data.endDateStr);
-      
-      if (startDate && endDate && endDate <= startDate) {
-        newErrors.endDateStr = VALIDATION_MESSAGES.END_DATE_BEFORE_START;
-      }
-
-      // Check for reasonable date ranges (not too far in past/future)
-      const now = new Date();
-      const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-      const twoYearsFromNow = new Date(now.getFullYear() + 2, now.getMonth(), now.getDate());
-
-      if (startDate && startDate < oneYearAgo) {
-        newErrors.startDateStr = VALIDATION_MESSAGES.START_DATE_TOO_OLD;
-      }
-      if (endDate && endDate > twoYearsFromNow) {
-        newErrors.endDateStr = VALIDATION_MESSAGES.END_DATE_TOO_FAR;
-      }
-    }
-
-    return newErrors;
-  };
+  const { validateTaskForm } = useTaskValidation();
 
   // Handle input changes
   const handleInputChange = (field: keyof TaskFormData) => (
@@ -90,7 +38,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
     try {
       // Validate form
-      const validationErrors = validateForm(formData);
+      const validationErrors = validateTaskForm(formData);
       
       if (Object.keys(validationErrors).length > 0) {
         setErrors(validationErrors);

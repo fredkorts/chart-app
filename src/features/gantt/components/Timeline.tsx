@@ -90,7 +90,7 @@
  */
 
 import React, { useState } from 'react';
-import type { Task } from '../../../types';
+import type { Task } from '@/types';
 import { TaskBar } from './TaskBar';
 import type { TaskBarData, TimelineData } from '../types/gantt.types';
 
@@ -108,7 +108,7 @@ interface TimelineProps {
  * task rendering to TaskBar components. Advanced features such as zooming or
  * drag-and-drop are intentionally left out for future development.
  */
-export const Timeline: React.FC<TimelineProps> = ({
+const TimelineComponent: React.FC<TimelineProps> = ({
   timelineData,
   tasks,
   rowHeight,
@@ -147,6 +147,8 @@ export const Timeline: React.FC<TimelineProps> = ({
     </div>
   );
 };
+
+export const Timeline = React.memo(TimelineComponent);
 
 export default Timeline;
 

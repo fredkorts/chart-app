@@ -71,7 +71,7 @@
  */
 
 import React from 'react';
-import type { Task } from '../../../types';
+import type { Task } from '@/types';
 import type { TaskBarData } from '../types/gantt.types';
 
 interface TaskBarProps {
@@ -88,7 +88,7 @@ interface TaskBarProps {
  * Render a single task bar within the Gantt timeline. This component is purely
  * presentational and relies on positioning data calculated elsewhere.
  */
-export const TaskBar: React.FC<TaskBarProps> = ({
+const TaskBarComponent: React.FC<TaskBarProps> = ({
   task,
   rowHeight,
   taskHeight,
@@ -127,6 +127,8 @@ export const TaskBar: React.FC<TaskBarProps> = ({
     </div>
   );
 };
+
+export const TaskBar = React.memo(TaskBarComponent);
 
 export default TaskBar;
 

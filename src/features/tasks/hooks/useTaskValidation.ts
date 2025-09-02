@@ -1,7 +1,8 @@
-import { useState } from "react";
-import type { Task, ValidationError } from "../../../types";
-import { VALIDATION_MESSAGES } from "../../../utils/constants";
-import type { TaskValidationErrors } from "../types/tasks.types";
+import { useState } from 'react';
+import type { Task, ValidationError, TaskFormData } from '@/types';
+import { VALIDATION_MESSAGES } from '@/utils/constants';
+import { parseEstonianDate } from '@/utils/dateUtils';
+import type { TaskValidationErrors } from '../types/tasks.types';
 
 export const useTaskValidation = () => {
   const [errors, setErrors] = useState<ValidationError[]>([]);
@@ -48,12 +49,59 @@ export const useTaskValidation = () => {
   };
   
   const clearErrors = () => setErrors([]);
-  
-  return { 
-    errors, 
-    validateTask, 
-    getFormErrors, 
-    validateEstonianDate, 
-    clearErrors 
+
+  const validateTaskForm = (data: TaskFormData): TaskValidationErrors => {
+    const formErrors: TaskValidationErrors = {};
+
+    if (!data.name.trim()) {
+      formErrors.name = VALIDATION_MESSAGES.TASK_NAME_REQUIRED;
+    } else if (data.name.trim().length < 2) {
+      formErrors.name = VALIDATION_MESSAGES.TASK_NAME_TOO_SHORT;
+    } else if (data.name.trim().length > 100) {
+      formErrors.name = VALIDATION_MESSAGES.TASK_NAME_TOO_LONG;
+    }
+
+    if (!data.startDateStr.trim()) {
+      formErrors.startDateStr = VALIDATION_MESSAGES.START_DATE_REQUIRED;
+    } else if (!validateEstonianDate(data.startDateStr)) {
+      formErrors.startDateStr = VALIDATION_MESSAGES.INVALID_DATE_FORMAT;
+    }
+
+    if (!data.endDateStr.trim()) {
+      formErrors.endDateStr = VALIDATION_MESSAGES.END_DATE_REQUIRED;
+    } else if (!validateEstonianDate(data.endDateStr)) {
+      formErrors.endDateStr = VALIDATION_MESSAGES.INVALID_DATE_FORMAT;
+    }
+
+    if (validateEstonianDate(data.startDateStr) && validateEstonianDate(data.endDateStr)) {
+      const startDate = parseEstonianDate(data.startDateStr);
+      const endDate = parseEstonianDate(data.endDateStr);
+
+      if (startDate && endDate && endDate <= startDate) {
+        formErrors.endDateStr = VALIDATION_MESSAGES.END_DATE_BEFORE_START;
+      }
+
+      const now = new Date();
+      const oneYearAgo = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+      const twoYearsFromNow = new Date(now.getFullYear() + 2, now.getMonth(), now.getDate());
+
+      if (startDate && startDate < oneYearAgo) {
+        formErrors.startDateStr = VALIDATION_MESSAGES.START_DATE_TOO_OLD;
+      }
+      if (endDate && endDate > twoYearsFromNow) {
+        formErrors.endDateStr = VALIDATION_MESSAGES.END_DATE_TOO_FAR;
+      }
+    }
+
+    return formErrors;
+  };
+
+  return {
+    errors,
+    validateTask,
+    getFormErrors,
+    validateEstonianDate,
+    clearErrors,
+    validateTaskForm,
   };
 };

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import type { Task } from '../../../types';
+import type { Task } from '@/types';
 import { TaskForm } from './TaskForm';
-import { formatDate, calculateDuration, formatDurationEstonian } from '../../../utils/dateUtils';
-import { VALIDATION_MESSAGES } from '../../../utils/constants';
-import { Modal, Button, LoadingSpinner, ErrorDisplay } from '../../../components';
+import { formatDate, calculateDuration, formatDurationEstonian } from '@/utils/dateUtils';
+import { VALIDATION_MESSAGES } from '@/utils/constants';
+import { Modal, Button, LoadingSpinner, ErrorDisplay } from '@/components';
 import type { TaskDetailsModalProps, ModalMode } from '../types/tasks.types';
 
 export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
