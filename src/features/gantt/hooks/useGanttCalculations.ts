@@ -103,3 +103,138 @@
  * );
  * ```
  */
+
+import { useMemo } from 'react';
+import type { Task } from '../../../types';
+import type { TimelineData } from '../components/Timeline';
+import type { TaskBarData } from '../components/TaskBar';
+
+interface GanttCalculationOptions {
+  minimumTaskWidth?: number; // in percent
+  rowHeight?: number;
+  taskHeight?: number;
+  headerHeight?: number;
+}
+
+interface UseGanttCalculationsResult {
+  taskBars: TaskBarData[];
+  maxRow: number;
+  chartHeight: number;
+  rowHeight: number;
+  taskHeight: number;
+}
+
+/**
+ * Perform positioning and overlap calculations for the provided tasks and
+ * timeline. The hook returns processed task bars ready for rendering along with
+ * basic chart metrics.
+ */
+export const useGanttCalculations = (
+  tasks: Task[],
+  timelineData: TimelineData,
+  options: GanttCalculationOptions = {}
+): UseGanttCalculationsResult => {
+  const {
+    minimumTaskWidth = 1,
+    rowHeight = 32,
+    taskHeight = 28,
+    headerHeight = 60
+  } = options;
+
+  const taskBars = useMemo<TaskBarData[]>(() => {
+    if (!timelineData) return [];
+    if (tasks.length === 0) return [];
+
+    const totalDays = Math.ceil(
+      (timelineData.endDate.getTime() - timelineData.startDate.getTime()) /
+        (1000 * 60 * 60 * 24)
+    ) + 1;
+
+    // Prepare bars with initial positioning
+    const bars: TaskBarData[] = tasks.map(task => {
+      const displayStart =
+        task.startDate < timelineData.startDate
+          ? timelineData.startDate
+          : task.startDate;
+      const displayEnd =
+        task.endDate > timelineData.endDate
+          ? timelineData.endDate
+          : task.endDate;
+
+      const startOffset = Math.max(
+        0,
+        (displayStart.getTime() - timelineData.startDate.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      const duration =
+        Math.ceil(
+          (displayEnd.getTime() - displayStart.getTime()) /
+            (1000 * 60 * 60 * 24)
+        ) + 1;
+
+      const left = (startOffset / totalDays) * 100;
+      const width = Math.max((duration / totalDays) * 100, minimumTaskWidth);
+
+      return {
+        ...task,
+        left,
+        width,
+        row: 0,
+        isPartial:
+          task.startDate < timelineData.startDate ||
+          task.endDate > timelineData.endDate,
+        continuesLeft: task.startDate < timelineData.startDate,
+        continuesRight: task.endDate > timelineData.endDate
+      };
+    });
+
+    // Handle overlaps by assigning rows
+    const sorted = [...bars].sort(
+      (a, b) => a.startDate.getTime() - b.startDate.getTime()
+    );
+
+    const rows: TaskBarData[][] = [];
+
+    sorted.forEach(task => {
+      let assigned = -1;
+      for (let i = 0; i < rows.length; i++) {
+        const hasOverlap = rows[i].some(existing => {
+          return (
+            task.startDate <= existing.endDate &&
+            task.endDate >= existing.startDate
+          );
+        });
+        if (!hasOverlap) {
+          assigned = i;
+          break;
+        }
+      }
+
+      if (assigned === -1) {
+        assigned = rows.length;
+        rows.push([]);
+      }
+
+      task.row = assigned;
+      rows[assigned].push(task);
+    });
+
+    return bars;
+  }, [tasks, timelineData, minimumTaskWidth]);
+
+  const maxRow = useMemo(
+    () => (taskBars.length > 0 ? Math.max(...taskBars.map(t => t.row)) : -1),
+    [taskBars]
+  );
+
+  const chartHeight = useMemo(
+    () => Math.max(200, (maxRow + 1) * rowHeight + headerHeight + 40),
+    [maxRow, rowHeight, headerHeight]
+  );
+
+  return { taskBars, maxRow, chartHeight, rowHeight, taskHeight };
+};
+
+export default useGanttCalculations;
+

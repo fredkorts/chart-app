@@ -88,3 +88,76 @@
  * - Timeline annotations and comments
  * - Export capabilities (PDF, PNG)
  */
+
+import React, { useState } from 'react';
+import type { Task } from '../../../types';
+import { TaskBar, TaskBarData } from './TaskBar';
+
+export interface MonthInfo {
+  name: string;
+  date: Date;
+  daysInMonth: number;
+}
+
+export interface TimelineData {
+  startDate: Date;
+  endDate: Date;
+  months: MonthInfo[];
+}
+
+interface TimelineProps {
+  timelineData: TimelineData;
+  tasks: TaskBarData[];
+  rowHeight: number;
+  taskHeight: number;
+  onTaskClick?: (task: Task, event: React.MouseEvent) => void;
+  className?: string;
+}
+
+/**
+ * Basic timeline renderer responsible for displaying grid lines and delegating
+ * task rendering to TaskBar components. Advanced features such as zooming or
+ * drag-and-drop are intentionally left out for future development.
+ */
+export const Timeline: React.FC<TimelineProps> = ({
+  timelineData,
+  tasks,
+  rowHeight,
+  taskHeight,
+  onTaskClick,
+  className = ''
+}) => {
+  const [hovered, setHovered] = useState<string | null>(null);
+
+  return (
+    <div className={`timeline-area ${className}`}>
+      <div className="timeline-grid">
+        {timelineData.months.map((month, idx) => (
+          <div
+            key={month.name}
+            className="month-column"
+            style={{
+              left: `${(idx / timelineData.months.length) * 100}%`,
+              width: `${100 / timelineData.months.length}%`
+            }}
+          />
+        ))}
+      </div>
+
+      {tasks.map(task => (
+        <TaskBar
+          key={task.id}
+          task={task}
+          rowHeight={rowHeight}
+          taskHeight={taskHeight}
+          isHovered={hovered === task.id}
+          onHover={setHovered}
+          onClick={onTaskClick}
+        />
+      ))}
+    </div>
+  );
+};
+
+export default Timeline;
+

@@ -40,3 +40,116 @@
  * - Validation to prevent navigation to invalid date ranges
  * - Integration with URL routing for bookmarkable quarter views
  */
+
+import React, { useCallback } from 'react';
+import { getQuarterInfo } from '../../../utils/dateUtils';
+
+interface QuarterNavigationProps {
+  currentYear: number;
+  currentQuarter: 1 | 2 | 3 | 4;
+  onQuarterChange: (year: number, quarter: 1 | 2 | 3 | 4) => void;
+  showTodayButton?: boolean;
+  disabled?: boolean;
+  className?: string;
+}
+
+/**
+ * Lightweight quarter navigation component with previous/next controls and
+ * optional "Today" button. Keyboard navigation is supported via left and right
+ * arrow keys when the component is focused.
+ */
+export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
+  currentYear,
+  currentQuarter,
+  onQuarterChange,
+  showTodayButton = false,
+  disabled = false,
+  className = ''
+}) => {
+  const goToPrevious = useCallback(() => {
+    if (disabled) return;
+    let year = currentYear;
+    let quarter = (currentQuarter - 1) as 1 | 2 | 3 | 4;
+    if (quarter < 1) {
+      quarter = 4;
+      year -= 1;
+    }
+    onQuarterChange(year, quarter);
+  }, [currentYear, currentQuarter, disabled, onQuarterChange]);
+
+  const goToNext = useCallback(() => {
+    if (disabled) return;
+    let year = currentYear;
+    let quarter = (currentQuarter + 1) as 1 | 2 | 3 | 4;
+    if (quarter > 4) {
+      quarter = 1;
+      year += 1;
+    }
+    onQuarterChange(year, quarter);
+  }, [currentYear, currentQuarter, disabled, onQuarterChange]);
+
+  const goToToday = useCallback(() => {
+    if (disabled) return;
+    const { year, quarter } = getQuarterInfo(new Date());
+    onQuarterChange(year, quarter);
+  }, [disabled, onQuarterChange]);
+
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        goToPrevious();
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        goToNext();
+      }
+    },
+    [goToPrevious, goToNext]
+  );
+
+  return (
+    <div
+      className={`quarter-navigation ${className}`}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+    >
+      <button
+        type="button"
+        className="nav-button nav-prev"
+        onClick={goToPrevious}
+        disabled={disabled}
+        aria-label="Previous quarter"
+      >
+        &#8249;
+      </button>
+
+      <div className="quarter-label">
+        <h2>{`Q${currentQuarter} ${currentYear}`}</h2>
+      </div>
+
+      <button
+        type="button"
+        className="nav-button nav-next"
+        onClick={goToNext}
+        disabled={disabled}
+        aria-label="Next quarter"
+      >
+        &#8250;
+      </button>
+
+      {showTodayButton && (
+        <button
+          type="button"
+          className="nav-button nav-today"
+          onClick={goToToday}
+          disabled={disabled}
+        >
+          Today
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default QuarterNavigation;
+
