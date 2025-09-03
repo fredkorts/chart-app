@@ -4,7 +4,12 @@ import { parseEstonianDate } from '@/utils/dateUtils';
 import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
 import { useTaskValidation } from '../hooks/useTaskValidation';
 import { Button, Input, ErrorDisplay } from '@/components';
+import { DatePicker } from 'antd';
+import dayjs, { Dayjs } from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { TaskFormProps, TaskValidationErrors } from '../types/tasks.types';
+
+dayjs.extend(customParseFormat);
 
 export const TaskForm: React.FC<TaskFormProps> = ({
   onSubmit,
@@ -30,6 +35,23 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       setErrors((prev: TaskValidationErrors) => ({ ...prev, [field]: undefined }));
     }
   };
+
+  const handleDateRangeChange = (dates: null | [Dayjs | null, Dayjs | null]) => {
+    if (dates && dates[0] && dates[1]) {
+      const startStr = dates[0].format('DD.MM.YYYY');
+      const endStr = dates[1].format('DD.MM.YYYY');
+      setFormData(prev => ({ ...prev, startDateStr: startStr, endDateStr: endStr }));
+      if (errors.startDateStr || errors.endDateStr) {
+        setErrors(prev => ({ ...prev, startDateStr: undefined, endDateStr: undefined }));
+      }
+    } else {
+      setFormData(prev => ({ ...prev, startDateStr: '', endDateStr: '' }));
+    }
+  };
+
+  const now = dayjs();
+  const minDate = now.subtract(1, 'year');
+  const maxDate = now.add(2, 'year');
 
   // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
@@ -94,33 +116,34 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           autoComplete="off"
         />
 
-        {/* Start Date Field */}
-        <Input
-          id="startDate"
-          label="Alguskuupäev"
-          value={formData.startDateStr}
-          onChange={handleInputChange('startDateStr')}
-          placeholder="PP.KK.AAAA"
-          error={errors.startDateStr}
-          disabled={isSubmitting}
-          pattern="\d{2}\.\d{2}\.\d{4}"
-          autoComplete="off"
-          helperText="Kuupäev formaadis PP.KK.AAAA"
-        />
-
-        {/* End Date Field */}
-        <Input
-          id="endDate"
-          label="Lõppkuupäev"
-          value={formData.endDateStr}
-          onChange={handleInputChange('endDateStr')}
-          placeholder="PP.KK.AAAA"
-          error={errors.endDateStr}
-          disabled={isSubmitting}
-          pattern="\d{2}\.\d{2}\.\d{4}"
-          autoComplete="off"
-          helperText="Kuupäev formaadis PP.KK.AAAA"
-        />
+        {/* Date Range Field */}
+        <div className="w-full">
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Kuupäevad
+          </label>
+          <DatePicker.RangePicker
+            value={
+              formData.startDateStr && formData.endDateStr
+                ? [
+                    dayjs(formData.startDateStr, 'DD.MM.YYYY'),
+                    dayjs(formData.endDateStr, 'DD.MM.YYYY')
+                  ]
+                : null
+            }
+            onChange={handleDateRangeChange}
+            format="DD.MM.YYYY"
+            minDate={minDate}
+            maxDate={maxDate}
+            disabled={isSubmitting}
+            className="w-full"
+            placeholder={["Alguskuupäev", "Lõppkuupäev"]}
+          />
+          {(errors.startDateStr || errors.endDateStr) && (
+            <p className="mt-1 text-sm text-red-600" role="alert">
+              {errors.startDateStr || errors.endDateStr}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Form Actions */}
