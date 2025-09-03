@@ -50,6 +50,10 @@ export const getQuarterEnd = (year: number, quarter: 1 | 2 | 3 | 4): Date => {
   return new Date(year, month + 1, 0);
 };
 
+export const getYearStart = (year: number): Date => new Date(year, 0, 1);
+
+export const getYearEnd = (year: number): Date => new Date(year, 11, 31);
+
 export const formatQuarter = (year: number, quarter: 1 | 2 | 3 | 4): string => {
   return `Q${quarter} ${year}`;
 };
@@ -89,4 +93,10 @@ export const isTaskInQuarter = (task: Task, year: number, quarter: 1 | 2 | 3 | 4
   
   // Task is visible if it overlaps with the quarter at all
   return task.startDate <= quarterEnd && task.endDate >= quarterStart;
+};
+
+export const isTaskInYear = (task: Task, year: number): boolean => {
+  const yearStart = getYearStart(year);
+  const yearEnd = getYearEnd(year);
+  return task.startDate <= yearEnd && task.endDate >= yearStart;
 };

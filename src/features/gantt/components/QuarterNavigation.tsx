@@ -49,6 +49,8 @@ interface QuarterNavigationProps {
   currentYear: number;
   currentQuarter: 1 | 2 | 3 | 4;
   onQuarterChange: (year: number, quarter: 1 | 2 | 3 | 4) => void;
+  viewMode: 'quarter' | 'year';
+  onViewModeChange?: (mode: 'quarter' | 'year') => void;
   showTodayButton?: boolean;
   disabled?: boolean;
   className?: string;
@@ -63,11 +65,13 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
   currentYear,
   currentQuarter,
   onQuarterChange,
+  viewMode,
+  onViewModeChange,
   showTodayButton = false,
   disabled = false,
   className = ''
 }) => {
-  // Use the hook for navigation logic with the external callback
+  // Use the hook for quarter navigation logic with the external callback
   const {
     goToPrevious,
     goToNext,
@@ -79,19 +83,35 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
   });
 
   const handlePrevious = useCallback(() => {
-    if (disabled || !canGoBack) return;
-    goToPrevious();
-  }, [disabled, canGoBack, goToPrevious]);
+    if (disabled) return;
+    if (viewMode === 'quarter') {
+      if (!canGoBack) return;
+      goToPrevious();
+    } else {
+      onQuarterChange(currentYear - 1, currentQuarter);
+    }
+  }, [disabled, viewMode, canGoBack, goToPrevious, onQuarterChange, currentYear, currentQuarter]);
 
   const handleNext = useCallback(() => {
-    if (disabled || !canGoForward) return;
-    goToNext();
-  }, [disabled, canGoForward, goToNext]);
+    if (disabled) return;
+    if (viewMode === 'quarter') {
+      if (!canGoForward) return;
+      goToNext();
+    } else {
+      onQuarterChange(currentYear + 1, currentQuarter);
+    }
+  }, [disabled, viewMode, canGoForward, goToNext, onQuarterChange, currentYear, currentQuarter]);
 
   const handleToday = useCallback(() => {
     if (disabled) return;
-    goToToday();
-  }, [disabled, goToToday]);
+    if (viewMode === 'quarter') {
+      goToToday();
+    } else {
+      const now = new Date();
+      const q = (Math.floor(now.getMonth() / 3) + 1) as 1 | 2 | 3 | 4;
+      onQuarterChange(now.getFullYear(), q);
+    }
+  }, [disabled, viewMode, goToToday, onQuarterChange]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -116,24 +136,37 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
         type="button"
         className="nav-button nav-prev"
         onClick={handlePrevious}
-        disabled={disabled || !canGoBack}
-        aria-label="Previous quarter"
+        disabled={disabled || (viewMode === 'quarter' && !canGoBack)}
+        aria-label={viewMode === 'quarter' ? 'Previous quarter' : 'Previous year'}
       >
         &#8249;
       </button>
 
       <div className="quarter-label">
-        <h2>{`Q${currentQuarter} ${currentYear}`}</h2>
+        <h2>
+          {viewMode === 'quarter'
+            ? `Q${currentQuarter} ${currentYear}`
+            : `${currentYear}`}
+        </h2>
       </div>
 
       <button
         type="button"
         className="nav-button nav-next"
         onClick={handleNext}
-        disabled={disabled || !canGoForward}
-        aria-label="Next quarter"
+        disabled={disabled || (viewMode === 'quarter' && !canGoForward)}
+        aria-label={viewMode === 'quarter' ? 'Next quarter' : 'Next year'}
       >
         &#8250;
+      </button>
+
+      <button
+        type="button"
+        className="nav-button nav-toggle"
+        onClick={() => onViewModeChange?.(viewMode === 'quarter' ? 'year' : 'quarter')}
+        disabled={disabled}
+      >
+        {viewMode === 'quarter' ? 'Year' : 'Quarter'}
       </button>
 
       {showTodayButton && (

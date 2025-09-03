@@ -6,7 +6,8 @@ import {
   getQuarterStart,
   getQuarterEnd,
   calculateDuration,
-  isTaskInQuarter
+  isTaskInQuarter,
+  isTaskInYear
 } from '../dateUtils';
 import type { Task } from '../../types';
 
@@ -115,6 +116,30 @@ describe('dateUtils', () => {
       const task = createTask('15.04.2023', '15.05.2023'); // Q2 only
       expect(isTaskInQuarter(task, 2023, 1)).toBe(false);
       expect(isTaskInQuarter(task, 2023, 2)).toBe(true);
+    });
+  });
+
+  describe('isTaskInYear', () => {
+    const createTask = (start: string, end: string): Task => ({
+      id: '1',
+      name: 'Test Task',
+      startDate: parseEstonianDate(start)!,
+      endDate: parseEstonianDate(end)!,
+    });
+
+    it('should detect tasks within the year', () => {
+      const task = createTask('01.03.2023', '10.05.2023');
+      expect(isTaskInYear(task, 2023)).toBe(true);
+    });
+
+    it('should detect tasks spanning multiple years', () => {
+      const task = createTask('01.12.2022', '10.01.2023');
+      expect(isTaskInYear(task, 2023)).toBe(true);
+    });
+
+    it('should exclude tasks outside the year', () => {
+      const task = createTask('01.01.2024', '10.02.2024');
+      expect(isTaskInYear(task, 2023)).toBe(false);
     });
   });
 });

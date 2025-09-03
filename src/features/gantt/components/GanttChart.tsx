@@ -34,7 +34,7 @@
  * - Follows established project patterns for component structure and styling
  */
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import '../gantt.css';
 import type { Task } from '../../../types';
 import { QuarterNavigation } from './QuarterNavigation';
@@ -60,6 +60,8 @@ export const GanttChart: React.FC<GanttChartProps> = ({
   onQuarterChange,
   className = ''
 }) => {
+  const [viewMode, setViewMode] = useState<'quarter' | 'year'>('quarter');
+
   // Use the extracted hook for all calculations
   const {
     timelineData,
@@ -72,6 +74,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     tasks,
     currentYear,
     currentQuarter: currentQuarter as 1 | 2 | 3 | 4,
+    viewMode
   });
 
   // Handle quarter navigation
@@ -92,6 +95,8 @@ export const GanttChart: React.FC<GanttChartProps> = ({
         <QuarterNavigation
           currentYear={currentYear}
           currentQuarter={currentQuarter as 1 | 2 | 3 | 4}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
           onQuarterChange={handleQuarterChange}
         />
 
@@ -102,8 +107,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           </div>
           <div className="timeline-months">
             {timelineData.months.map((month) => (
-              <div key={month.name} className="month-header" 
-                   style={{ width: `${100/3}%` }}>
+              <div
+                key={month.name}
+                className="month-header"
+                style={{ width: `${100 / timelineData.months.length}%` }}
+              >
                 <span className="month-name">{month.name}</span>
                 <span className="month-year">{currentYear}</span>
               </div>
@@ -117,7 +125,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
         {quarterTasks.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📅</div>
-            <h3>No tasks for Q{currentQuarter} {currentYear}</h3>
+            {viewMode === 'quarter' ? (
+              <h3>No tasks for Q{currentQuarter} {currentYear}</h3>
+            ) : (
+              <h3>No tasks for {currentYear}</h3>
+            )}
             <p>Add some tasks to see them in the timeline.</p>
           </div>
         ) : (

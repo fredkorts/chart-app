@@ -14,7 +14,14 @@
 
 import { useMemo } from 'react';
 import type { Task } from '../../../types';
-import { getQuarterStart, getQuarterEnd, isTaskInQuarter } from '../../../utils/dateUtils';
+import {
+  getQuarterStart,
+  getQuarterEnd,
+  isTaskInQuarter,
+  getYearStart,
+  getYearEnd,
+  isTaskInYear
+} from '../../../utils/dateUtils';
 import { ESTONIAN_MONTHS } from '../../../utils/constants';
 import type { TaskBarData, TimelineData } from '../types/gantt.types';
 
@@ -22,6 +29,11 @@ interface UseGanttCalculationsParams {
   tasks: Task[];
   currentYear: number;
   currentQuarter: 1 | 2 | 3 | 4;
+  /**
+   * Determines whether calculations are done for a single quarter or a full year.
+   * Defaults to quarter view.
+   */
+  viewMode?: 'quarter' | 'year';
   taskHeight?: number;
   rowHeight?: number;
 }
@@ -44,18 +56,43 @@ export const useGanttCalculations = ({
   tasks,
   currentYear,
   currentQuarter,
+  viewMode = 'quarter',
   taskHeight = DEFAULT_TASK_HEIGHT,
   rowHeight = DEFAULT_TASK_HEIGHT + DEFAULT_TASK_GAP
 }: UseGanttCalculationsParams): UseGanttCalculationsReturn => {
-  
-  // Calculate timeline data for current quarter
+
+  // Calculate timeline data based on view mode
   const timelineData = useMemo((): TimelineData => {
+    if (viewMode === 'year') {
+      const startDate = getYearStart(currentYear);
+      const endDate = getYearEnd(currentYear);
+
+      const months = [];
+      for (let i = 0; i < 12; i++) {
+        const monthDate = new Date(currentYear, i, 1);
+        const daysInMonth = new Date(currentYear, i + 1, 0).getDate();
+        months.push({
+          name: ESTONIAN_MONTHS[i],
+          date: monthDate,
+          daysInMonth
+        });
+      }
+
+      return {
+        year: currentYear,
+        mode: 'year',
+        startDate,
+        endDate,
+        months
+      };
+    }
+
     const startDate = getQuarterStart(currentYear, currentQuarter);
     const endDate = getQuarterEnd(currentYear, currentQuarter);
 
     const months = [];
     const startMonth = (currentQuarter - 1) * 3;
-    
+
     for (let i = 0; i < 3; i++) {
       const monthDate = new Date(currentYear, startMonth + i, 1);
       const daysInMonth = new Date(currentYear, startMonth + i + 1, 0).getDate();
@@ -69,18 +106,22 @@ export const useGanttCalculations = ({
     return {
       year: currentYear,
       quarter: currentQuarter,
+      mode: 'quarter',
       startDate,
       endDate,
       months
     };
-  }, [currentYear, currentQuarter]);
+  }, [currentYear, currentQuarter, viewMode]);
 
-  // Filter tasks for current quarter
+  // Filter tasks for current period
   const quarterTasks = useMemo(() => {
-    return tasks.filter(task => 
+    if (viewMode === 'year') {
+      return tasks.filter(task => isTaskInYear(task, currentYear));
+    }
+    return tasks.filter(task =>
       isTaskInQuarter(task, currentYear, currentQuarter)
     );
-  }, [tasks, currentYear, currentQuarter]);
+  }, [tasks, currentYear, currentQuarter, viewMode]);
 
   // Calculate task bar positions and handle overlaps
   const taskBars = useMemo<TaskBarData[]>(() => {
