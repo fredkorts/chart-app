@@ -10,11 +10,18 @@ export interface MonthInfo {
 }
 
 /**
- * Timeline data containing quarter information and month breakdown
+ * Timeline data containing period information and month breakdown
  */
 export interface TimelineData {
   year: number;
-  quarter: number;
+  /**
+   * Quarter number for quarter view. Undefined when showing a full year.
+   */
+  quarter?: number;
+  /**
+   * Indicates whether the timeline represents a single quarter or a full year.
+   */
+  mode: 'quarter' | 'year';
   startDate: Date;
   endDate: Date;
   months: MonthInfo[];
