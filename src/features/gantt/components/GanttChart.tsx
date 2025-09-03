@@ -35,6 +35,7 @@
  */
 
 import React, { useCallback } from 'react';
+import '../gantt.css';
 import type { Task } from '../../../types';
 import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';

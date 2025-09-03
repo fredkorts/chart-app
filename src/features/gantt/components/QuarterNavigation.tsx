@@ -42,6 +42,7 @@
  */
 
 import React, { useCallback } from 'react';
+import '../gantt.css';
 import { useQuarterNavigation } from '../hooks/useQuarterNavigation';
 
 interface QuarterNavigationProps {
