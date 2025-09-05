@@ -132,7 +132,7 @@ export const useGanttCalculations = ({
     ) + 1;
 
     // Calculate positions for each task
-    const bars: TaskBarData[] = quarterTasks.map(task => {
+    const bars: TaskBarData[] = quarterTasks.map((task, index) => {
       // Clamp task dates to quarter boundaries for display
       const displayStartDate = task.startDate < timelineData.startDate ? timelineData.startDate : task.startDate;
       const displayEndDate = task.endDate > timelineData.endDate ? timelineData.endDate : task.endDate;
@@ -152,21 +152,15 @@ export const useGanttCalculations = ({
         ...task,
         left,
         width: Math.max(width, 1), // Minimum 1% width
-        row: 0, // Will be calculated below
+        row: index, // Each task gets a unique sequential row
         isPartial: task.startDate < timelineData.startDate || task.endDate > timelineData.endDate,
         continuesLeft: task.startDate < timelineData.startDate,
         continuesRight: task.endDate > timelineData.endDate
       };
     });
 
-    // Assign each task to its own row so that every task occupies a full row
-    const sortedTasks = [...bars].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-
-    sortedTasks.forEach((task, index) => {
-      task.row = index;
-    });
-
-    return sortedTasks;
+    // Return bars in their original order so new tasks are always placed on a new row beneath previous tasks
+    return bars;
   }, [quarterTasks, timelineData]);
 
   // Calculate chart dimensions
