@@ -63,8 +63,6 @@ interface GanttChartProps {
   className?: string;
 }
 
-const HEADER_HEIGHT = 60;
-
 export const GanttChart: React.FC<GanttChartProps> = ({
   tasks,
   currentYear = new Date().getFullYear(),
@@ -84,7 +82,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     timelineData,
     quarterTasks,
     taskBars,
-    chartHeight,
     rowHeight,
     taskHeight
   } = useGanttCalculations({
@@ -203,7 +200,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
                 style={{ width: `${100 / timelineData.months.length}%` }}
               >
                 <span className="month-name">{month.name}</span>
-                <span className="month-year">{currentYear}</span>
               </div>
             ))}
           </div>
@@ -211,7 +207,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
       </div>
 
       {/* Chart content */}
-      <div className="gantt-content" style={{ height: chartHeight - HEADER_HEIGHT }}>
+      <div className="gantt-content">
         {panelMode === 'add' ? (
           <div className="gantt-body task-form-view">
             <TaskForm onSubmit={handleAddTask} onCancel={() => setPanelMode('chart')} />

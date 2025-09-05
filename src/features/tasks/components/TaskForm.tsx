@@ -105,12 +105,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       <div className="form-fields">
         {/* Task Name Field */}
         <div className="w-full">
-          <label
-            htmlFor="taskName"
-            className="block text-sm font-medium text-gray-700 mb-1"
-          >
-            Ülesande nimi
-          </label>
           <Input
             id="taskName"
             value={formData.name}
@@ -129,9 +123,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
         {/* Date Range Field */}
         <div className="w-full">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Kuupäevad
-          </label>
           <DatePicker.RangePicker
             value={
               formData.startDateStr && formData.endDateStr

@@ -21,8 +21,8 @@ export const QUARTER_NAMES = ['Q1', 'Q2', 'Q3', 'Q4'] as const;
 
 // Month names for Estonian locale
 export const ESTONIAN_MONTHS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dets'
+  'Jaanuar', 'Veebruar', 'Märts', 'Aprill', 'Mai', 'Juuni',
+  'Juuli', 'August', 'September', 'Oktoober', 'November', 'Detsember'
 ] as const;
 
 // Validation messages in Estonian

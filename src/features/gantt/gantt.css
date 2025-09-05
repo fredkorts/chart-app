@@ -6,7 +6,7 @@
   width: 100%;
   border: 1px solid #e5e7eb;
   background-color: #fff;
-  font-size: 14px;
+  font-size: 12px;
 }
 
 .gantt-header {
@@ -21,6 +21,11 @@
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem;
+}
+
+.gantt-content {
+  min-height: 40rem;
+  max-height: 100vh;
 }
 
 .quarter-navigation {
@@ -120,9 +125,6 @@
 }
 
 .task-name-row {
-  position: absolute;
-  left: 0;
-  right: 0;
   border-bottom: 1px solid #e5e7eb;
 }
 

@@ -44,7 +44,8 @@
 import React, { useCallback } from 'react';
 import '../gantt.css';
 import { useQuarterNavigation } from '../hooks/useQuarterNavigation';
-import { Button } from 'antd';
+import { Button, Segmented } from 'antd';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 
 interface QuarterNavigationProps {
   currentYear: number;
@@ -134,13 +135,12 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
       onKeyDown={handleKeyDown}
     >
       <Button
-        htmlType="button"
-        className="nav-button nav-prev"
+        type="primary" 
+        icon={<LeftOutlined />}
         onClick={handlePrevious}
         disabled={disabled || (viewMode === 'quarter' && !canGoBack)}
-        aria-label={viewMode === 'quarter' ? 'Previous quarter' : 'Previous year'}
+        aria-label={viewMode === 'quarter' ? 'Eelmine kvartal' : 'Eelmine aasta'}
       >
-        &#8249;
       </Button>
 
       <div className="quarter-label">
@@ -151,24 +151,22 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
         </h2>
       </div>
 
-      <Button
-        htmlType="button"
-        className="nav-button nav-next"
+      <Button 
+        type="primary" 
+        icon={<RightOutlined />}
         onClick={handleNext}
         disabled={disabled || (viewMode === 'quarter' && !canGoForward)}
-        aria-label={viewMode === 'quarter' ? 'Next quarter' : 'Next year'}
-      >
-        &#8250;
+        aria-label={viewMode === 'quarter' ? 'Järgmine kvartal' : 'Järgmine aasta'}
+        >
       </Button>
 
-      <Button
-        htmlType="button"
-        className="nav-button nav-toggle"
-        onClick={() => onViewModeChange?.(viewMode === 'quarter' ? 'year' : 'quarter')}
+      <Segmented
+        options={['Kvartal', 'Aasta']}
         disabled={disabled}
-      >
-        {viewMode === 'quarter' ? 'Year' : 'Quarter'}
-      </Button>
+        onChange={() => {
+          onViewModeChange?.(viewMode === 'quarter' ? 'year' : 'quarter')
+        }}
+      />
 
       {showTodayButton && (
         <Button
@@ -177,7 +175,7 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
           onClick={handleToday}
           disabled={disabled}
         >
-          Today
+          Täna
         </Button>
       )}
     </div>

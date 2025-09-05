@@ -5,6 +5,8 @@ import './components/tasks.css';
 import type { Task } from '@/types';
 import { GanttChart } from '@/features/gantt';
 import { useTasks } from '@/features/tasks';
+import { Layout } from 'antd';
+import { Content, Footer } from 'antd/es/layout/layout';
 
 function App() {
   const {
@@ -39,19 +41,24 @@ function App() {
   };
 
   return (
-    <div className="app-container">
-      <div className="gantt-container">
-        <GanttChart
-          tasks={tasks}
-          currentYear={year}
-          currentQuarter={quarter}
-          onQuarterChange={handleQuarterChange}
-          onAddTask={handleAddTask}
-          onEditTask={handleEditTask}
-          onDeleteTask={handleDeleteTask}
-        />
-      </div>
-    </div>
+    <Layout style={{ height: '100vh', width: '100vw' }}>
+      <Layout className='app-container'>
+        <Content>
+          <div className="gantt-container">
+            <GanttChart
+              tasks={tasks}
+              currentYear={year}
+              currentQuarter={quarter}
+              onQuarterChange={handleQuarterChange}
+              onAddTask={handleAddTask}
+              onEditTask={handleEditTask}
+              onDeleteTask={handleDeleteTask}
+            />
+          </div>
+        </Content>
+      </Layout>
+      <Footer>Footer</Footer>
+    </Layout>
   );
 }
 
