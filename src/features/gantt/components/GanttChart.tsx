@@ -40,6 +40,8 @@ import type { Task } from '../../../types';
 import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
+import { TaskForm } from '@/features/tasks';
+import { Button } from 'antd';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -47,6 +49,7 @@ interface GanttChartProps {
   currentQuarter?: number;
   onTaskClick?: (task: Task) => void;
   onQuarterChange?: (year: number, quarter: number) => void;
+  onAddTask?: (task: Omit<Task, 'id'>) => Promise<void> | void;
   className?: string;
 }
 
@@ -58,9 +61,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
   currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3),
   onTaskClick,
   onQuarterChange,
+  onAddTask,
   className = ''
 }) => {
   const [viewMode, setViewMode] = useState<'quarter' | 'year'>('quarter');
+  const [showTaskForm, setShowTaskForm] = useState(false);
 
   // Use the extracted hook for all calculations
   const {
@@ -88,17 +93,28 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     onTaskClick?.(task);
   }, [onTaskClick]);
 
+  const handleAddTask = useCallback(async (task: Omit<Task, 'id'>) => {
+    await onAddTask?.(task);
+    setShowTaskForm(false);
+  }, [onAddTask]);
+
   return (
     <div className={`gantt-chart ${className}`}>
       {/* Header with extracted navigation */}
       <div className="gantt-header">
-        <QuarterNavigation
-          currentYear={currentYear}
-          currentQuarter={currentQuarter as 1 | 2 | 3 | 4}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          onQuarterChange={handleQuarterChange}
-        />
+        <div className="gantt-toolbar">
+          <QuarterNavigation
+            currentYear={currentYear}
+            currentQuarter={currentQuarter as 1 | 2 | 3 | 4}
+            viewMode={viewMode}
+            onViewModeChange={setViewMode}
+            onQuarterChange={handleQuarterChange}
+            disabled={showTaskForm}
+          />
+          <Button htmlType="button" onClick={() => setShowTaskForm(prev => !prev)}>
+            {showTaskForm ? 'View Chart' : 'Add Task'}
+          </Button>
+        </div>
 
         {/* Timeline months header */}
         <div className="timeline-header">
@@ -122,7 +138,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
 
       {/* Chart content */}
       <div className="gantt-content" style={{ height: chartHeight - HEADER_HEIGHT }}>
-        {quarterTasks.length === 0 ? (
+        {showTaskForm ? (
+          <div className="gantt-body task-form-view">
+            <TaskForm onSubmit={handleAddTask} onCancel={() => setShowTaskForm(false)} />
+          </div>
+        ) : quarterTasks.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">📅</div>
             {viewMode === 'quarter' ? (

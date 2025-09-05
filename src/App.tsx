@@ -5,7 +5,6 @@ import './components/tasks.css';
 import type { Task } from '@/types';
 import { GanttChart } from '@/features/gantt';
 import {
-  TaskForm,
   TaskDetailsModal,
   useTasks,
 } from '@/features/tasks';
@@ -50,9 +49,6 @@ function App() {
 
   return (
     <div className="app-container">
-      <div className="task-form-container">
-        <TaskForm onSubmit={handleAddTask} />
-      </div>
       <div className="gantt-container">
         <GanttChart
           tasks={tasks}
@@ -60,6 +56,7 @@ function App() {
           currentQuarter={quarter}
           onTaskClick={handleTaskClick}
           onQuarterChange={handleQuarterChange}
+          onAddTask={handleAddTask}
         />
       </div>
       <TaskDetailsModal

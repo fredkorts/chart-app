@@ -16,6 +16,13 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.gantt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
 .quarter-navigation {
   display: flex;
   align-items: center;
@@ -89,6 +96,11 @@
 .gantt-body {
   position: relative;
   overflow: hidden;
+}
+
+.gantt-body.task-form-view {
+  display: block;
+  padding: 1rem;
 }
 
 .timeline-area {

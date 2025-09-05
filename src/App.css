@@ -11,12 +11,6 @@
   height: 100%;
 }
 
-.task-form-container {
-  width: 320px;
-  padding: 1rem;
-  overflow-y: auto;
-}
-
 .gantt-container {
   flex: 1;
   overflow: auto;
@@ -28,7 +22,4 @@
     flex-direction: column;
   }
 
-  .task-form-container {
-    width: 100%;
-  }
 }
