@@ -3,7 +3,8 @@ import type { Task } from '@/types';
 import { TaskForm } from './TaskForm';
 import { formatDate, calculateDuration, formatDurationEstonian } from '@/utils/dateUtils';
 import { VALIDATION_MESSAGES } from '@/utils/constants';
-import { Modal, Button, LoadingSpinner, ErrorDisplay } from '@/components';
+import { Modal, LoadingSpinner, ErrorDisplay } from '@/components';
+import { Button } from 'antd';
 import type { TaskDetailsModalProps, ModalMode } from '../types/tasks.types';
 
 export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
@@ -222,14 +223,14 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
               {!readOnly && (
                 <div className="flex space-x-3 pt-4 border-t border-gray-200">
                   <Button
-                    variant="primary"
+                    type="primary"
                     onClick={() => setMode('edit')}
                     disabled={isLoading}
                   >
                     Muuda
                   </Button>
                   <Button
-                    variant="danger"
+                    danger
                     onClick={() => setMode('confirm-delete')}
                     disabled={isLoading}
                   >
@@ -264,14 +265,13 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
 
               <div className="flex space-x-3 justify-center pt-4">
                 <Button
-                  variant="secondary"
                   onClick={() => setMode('view')}
                   disabled={isLoading}
                 >
                   Tühista
                 </Button>
                 <Button
-                  variant="danger"
+                  danger
                   onClick={handleDeleteTask}
                   disabled={isLoading}
                 >
