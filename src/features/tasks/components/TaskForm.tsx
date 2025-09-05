@@ -3,8 +3,8 @@ import type { Task, TaskFormData } from '@/types';
 import { parseEstonianDate } from '@/utils/dateUtils';
 import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
 import { useTaskValidation } from '../hooks/useTaskValidation';
-import { Button, Input, ErrorDisplay } from '@/components';
-import { DatePicker } from 'antd';
+import { ErrorDisplay } from '@/components';
+import { DatePicker, Button, Input } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { TaskFormProps, TaskValidationErrors } from '../types/tasks.types';
@@ -104,17 +104,28 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
       <div className="form-fields">
         {/* Task Name Field */}
-        <Input
-          id="taskName"
-          label="Ülesande nimi"
-          value={formData.name}
-          onChange={handleInputChange('name')}
-          placeholder="Sisestage ülesande nimi"
-          error={errors.name}
-          disabled={isSubmitting}
-          maxLength={100}
-          autoComplete="off"
-        />
+        <div className="w-full">
+          <label
+            htmlFor="taskName"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Ülesande nimi
+          </label>
+          <Input
+            id="taskName"
+            value={formData.name}
+            onChange={handleInputChange('name')}
+            placeholder="Sisestage ülesande nimi"
+            disabled={isSubmitting}
+            maxLength={100}
+            autoComplete="off"
+          />
+          {errors.name && (
+            <p className="mt-1 text-sm text-red-600" role="alert">
+              {errors.name}
+            </p>
+          )}
+        </div>
 
         {/* Date Range Field */}
         <div className="w-full">
@@ -150,17 +161,16 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       <div className="form-actions">
         {onCancel && (
           <Button
-            type="button"
+            htmlType="button"
             onClick={onCancel}
-            variant="secondary"
             disabled={isSubmitting}
           >
             Tühista
           </Button>
         )}
         <Button
-          type="submit"
-          variant="primary"
+          htmlType="submit"
+          type="primary"
           disabled={isSubmitting}
         >
           {isSubmitting ? 'Salvestamine...' : submitLabel}

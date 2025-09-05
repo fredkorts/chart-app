@@ -29,7 +29,7 @@
  * - Will integrate with the existing Quarter type from types/index.ts
  * 
  * Styling Approach:
- * - Consistent with existing button components in ui/Button.tsx
+ * - Uses Ant Design Button components for consistency
  * - Responsive design for mobile and desktop
  * - Clear visual hierarchy for current quarter vs navigation controls
  * - Accessible focus states and ARIA labels for screen readers
@@ -44,6 +44,7 @@
 import React, { useCallback } from 'react';
 import '../gantt.css';
 import { useQuarterNavigation } from '../hooks/useQuarterNavigation';
+import { Button } from 'antd';
 
 interface QuarterNavigationProps {
   currentYear: number;
@@ -132,15 +133,15 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
-      <button
-        type="button"
+      <Button
+        htmlType="button"
         className="nav-button nav-prev"
         onClick={handlePrevious}
         disabled={disabled || (viewMode === 'quarter' && !canGoBack)}
         aria-label={viewMode === 'quarter' ? 'Previous quarter' : 'Previous year'}
       >
         &#8249;
-      </button>
+      </Button>
 
       <div className="quarter-label">
         <h2>
@@ -150,34 +151,34 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
         </h2>
       </div>
 
-      <button
-        type="button"
+      <Button
+        htmlType="button"
         className="nav-button nav-next"
         onClick={handleNext}
         disabled={disabled || (viewMode === 'quarter' && !canGoForward)}
         aria-label={viewMode === 'quarter' ? 'Next quarter' : 'Next year'}
       >
         &#8250;
-      </button>
+      </Button>
 
-      <button
-        type="button"
+      <Button
+        htmlType="button"
         className="nav-button nav-toggle"
         onClick={() => onViewModeChange?.(viewMode === 'quarter' ? 'year' : 'quarter')}
         disabled={disabled}
       >
         {viewMode === 'quarter' ? 'Year' : 'Quarter'}
-      </button>
+      </Button>
 
       {showTodayButton && (
-        <button
-          type="button"
+        <Button
+          htmlType="button"
           className="nav-button nav-today"
           onClick={handleToday}
           disabled={disabled}
         >
           Today
-        </button>
+        </Button>
       )}
     </div>
   );

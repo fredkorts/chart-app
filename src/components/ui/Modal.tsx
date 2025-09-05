@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { clsx } from 'clsx';
 import { X } from 'lucide-react';
+import { Button } from 'antd';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -72,13 +73,13 @@ export const Modal: React.FC<ModalProps> = ({
               <h2 id="modal-title" className="text-lg font-semibold text-gray-900">
                 {title}
               </h2>
-              <button
+              <Button
                 onClick={onClose}
+                type="text"
                 className="text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 rounded-md p-1"
                 aria-label="Close modal"
-              >
-                <X className="h-5 w-5" />
-              </button>
+                icon={<X className="h-5 w-5" />}
+              />
             </div>
           )}
           
