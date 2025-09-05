@@ -159,41 +159,14 @@ export const useGanttCalculations = ({
       };
     });
 
-    // Handle overlapping tasks by assigning them to different rows
+    // Assign each task to its own row so that every task occupies a full row
     const sortedTasks = [...bars].sort((a, b) => a.startDate.getTime() - b.startDate.getTime());
-    const rows: TaskBarData[][] = [];
 
-    sortedTasks.forEach(task => {
-      // Find the first available row where this task doesn't overlap
-      let assignedRow = -1;
-      for (let rowIndex = 0; rowIndex < rows.length; rowIndex++) {
-        const row = rows[rowIndex];
-        const hasOverlap = row.some(existingTask => {
-          const taskStart = task.startDate;
-          const taskEnd = task.endDate;
-          const existingStart = existingTask.startDate;
-          const existingEnd = existingTask.endDate;
-          
-          return taskStart <= existingEnd && taskEnd >= existingStart;
-        });
-
-        if (!hasOverlap) {
-          assignedRow = rowIndex;
-          break;
-        }
-      }
-
-      // If no available row found, create a new one
-      if (assignedRow === -1) {
-        assignedRow = rows.length;
-        rows.push([]);
-      }
-
-      task.row = assignedRow;
-      rows[assignedRow].push(task);
+    sortedTasks.forEach((task, index) => {
+      task.row = index;
     });
 
-    return bars;
+    return sortedTasks;
   }, [quarterTasks, timelineData]);
 
   // Calculate chart dimensions
