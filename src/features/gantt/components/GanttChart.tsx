@@ -42,14 +42,24 @@ import { Timeline } from './Timeline';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
 import { TaskForm } from '@/features/tasks';
 import { Button } from 'antd';
+import {
+  formatDate,
+  calculateDuration,
+  formatDurationEstonian
+} from '@/utils/dateUtils';
+import { VALIDATION_MESSAGES } from '@/utils/constants';
 
 interface GanttChartProps {
   tasks: Task[];
   currentYear?: number;
   currentQuarter?: number;
-  onTaskClick?: (task: Task) => void;
   onQuarterChange?: (year: number, quarter: number) => void;
   onAddTask?: (task: Omit<Task, 'id'>) => Promise<void> | void;
+  onEditTask?: (
+    taskId: string,
+    updatedTask: Omit<Task, 'id'>
+  ) => Promise<{ success: boolean; task?: Task }> | void;
+  onDeleteTask?: (taskId: string) => Promise<{ success: boolean } | void> | void;
   className?: string;
 }
 
@@ -59,13 +69,15 @@ export const GanttChart: React.FC<GanttChartProps> = ({
   tasks,
   currentYear = new Date().getFullYear(),
   currentQuarter = Math.ceil((new Date().getMonth() + 1) / 3),
-  onTaskClick,
   onQuarterChange,
   onAddTask,
+  onEditTask,
+  onDeleteTask,
   className = ''
 }) => {
   const [viewMode, setViewMode] = useState<'quarter' | 'year'>('quarter');
-  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [panelMode, setPanelMode] = useState<'chart' | 'add' | 'details' | 'edit' | 'confirm-delete'>('chart');
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
 
   // Use the extracted hook for all calculations
   const {
@@ -90,13 +102,65 @@ export const GanttChart: React.FC<GanttChartProps> = ({
   // Handle task click
   const handleTaskClick = useCallback((task: Task, event: React.MouseEvent) => {
     event.stopPropagation();
-    onTaskClick?.(task);
-  }, [onTaskClick]);
+    setSelectedTask(task);
+    setPanelMode('details');
+  }, []);
 
   const handleAddTask = useCallback(async (task: Omit<Task, 'id'>) => {
     await onAddTask?.(task);
-    setShowTaskForm(false);
+    setPanelMode('chart');
   }, [onAddTask]);
+
+  const handleEditSubmit = useCallback(async (updatedTask: Omit<Task, 'id'>) => {
+    if (!selectedTask) return;
+    const result = await onEditTask?.(selectedTask.id, updatedTask);
+    if (result?.success && result.task) {
+      setSelectedTask(result.task);
+      setPanelMode('details');
+    }
+  }, [onEditTask, selectedTask]);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!selectedTask) return;
+    await onDeleteTask?.(selectedTask.id);
+    setSelectedTask(null);
+    setPanelMode('chart');
+  }, [onDeleteTask, selectedTask]);
+
+  const getTaskStatus = (
+    startDate: Date,
+    endDate: Date
+  ): { status: string; className: string } => {
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+    const end = new Date(endDate);
+    end.setHours(0, 0, 0, 0);
+
+    if (now < start) {
+      return {
+        status: VALIDATION_MESSAGES.STATUS_UPCOMING,
+        className: 'status-upcoming'
+      };
+    } else if (now > end) {
+      return {
+        status: VALIDATION_MESSAGES.STATUS_COMPLETED,
+        className: 'status-completed'
+      };
+    } else {
+      return {
+        status: VALIDATION_MESSAGES.STATUS_IN_PROGRESS,
+        className: 'status-active'
+      };
+    }
+  };
+
+  const getTaskFormData = (task: Task) => ({
+    name: task.name,
+    startDateStr: formatDate(task.startDate),
+    endDateStr: formatDate(task.endDate)
+  });
 
   return (
     <div className={`gantt-chart ${className}`}>
@@ -109,10 +173,20 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             viewMode={viewMode}
             onViewModeChange={setViewMode}
             onQuarterChange={handleQuarterChange}
-            disabled={showTaskForm}
+            disabled={panelMode !== 'chart'}
           />
-          <Button htmlType="button" onClick={() => setShowTaskForm(prev => !prev)}>
-            {showTaskForm ? 'View Chart' : 'Add Task'}
+          <Button
+            htmlType="button"
+            onClick={() => {
+              if (panelMode === 'chart') {
+                setPanelMode('add');
+              } else {
+                setPanelMode('chart');
+                setSelectedTask(null);
+              }
+            }}
+          >
+            {panelMode === 'chart' ? 'Add Task' : 'View Chart'}
           </Button>
         </div>
 
@@ -138,9 +212,91 @@ export const GanttChart: React.FC<GanttChartProps> = ({
 
       {/* Chart content */}
       <div className="gantt-content" style={{ height: chartHeight - HEADER_HEIGHT }}>
-        {showTaskForm ? (
+        {panelMode === 'add' ? (
           <div className="gantt-body task-form-view">
-            <TaskForm onSubmit={handleAddTask} onCancel={() => setShowTaskForm(false)} />
+            <TaskForm onSubmit={handleAddTask} onCancel={() => setPanelMode('chart')} />
+          </div>
+        ) : panelMode === 'edit' && selectedTask ? (
+          <div className="gantt-body task-form-view">
+            <TaskForm
+              onSubmit={handleEditSubmit}
+              onCancel={() => setPanelMode('details')}
+              submitLabel="Salvesta muudatused"
+              initialData={getTaskFormData(selectedTask)}
+            />
+          </div>
+        ) : panelMode === 'details' && selectedTask ? (
+          <div className="gantt-body task-details-view">
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-4">
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Ülesande nimi:</label>
+                  <div className="text-gray-900 font-medium">{selectedTask.name}</div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Värv:</label>
+                  <div className="flex items-center space-x-2">
+                    <div
+                      className="w-4 h-4 rounded border border-gray-300"
+                      style={{ backgroundColor: selectedTask.color }}
+                    />
+                    <span className="text-gray-600 text-sm">{selectedTask.color}</span>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Alguskuupäev:</label>
+                  <div className="text-gray-900">{formatDate(selectedTask.startDate)}</div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Lõppkuupäev:</label>
+                  <div className="text-gray-900">{formatDate(selectedTask.endDate)}</div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Kestus:</label>
+                  <div className="text-gray-900">
+                    {formatDurationEstonian(calculateDuration(selectedTask.startDate, selectedTask.endDate))}
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Staatus:</label>
+                  <div className="text-gray-900">
+                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getTaskStatus(selectedTask.startDate, selectedTask.endDate).className}`}>
+                      {getTaskStatus(selectedTask.startDate, selectedTask.endDate).status}
+                    </span>
+                  </div>
+                </div>
+                <div className="flex flex-col">
+                  <label className="text-sm font-medium text-gray-700 mb-1">Ülesande ID:</label>
+                  <div className="text-gray-500 text-sm font-mono">{selectedTask.id}</div>
+                </div>
+              </div>
+
+              <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                <Button type="primary" onClick={() => setPanelMode('edit')}>
+                  Muuda
+                </Button>
+                <Button onClick={() => { setSelectedTask(null); setPanelMode('chart'); }}>
+                  Mine tagasi
+                </Button>
+                <Button danger onClick={() => setPanelMode('confirm-delete')}>
+                  Kustuta
+                </Button>
+              </div>
+            </div>
+          </div>
+        ) : panelMode === 'confirm-delete' && selectedTask ? (
+          <div className="gantt-body task-details-view">
+            <div className="space-y-4">
+              <p className="text-center">Kas soovite kustutada selle ülesande?</p>
+              <div className="flex space-x-3 justify-center pt-4">
+                <Button onClick={() => { setSelectedTask(null); setPanelMode('chart'); }}>
+                  Ei
+                </Button>
+                <Button danger onClick={handleDeleteConfirm}>
+                  Jah
+                </Button>
+              </div>
+            </div>
           </div>
         ) : quarterTasks.length === 0 ? (
           <div className="empty-state">
@@ -154,11 +310,13 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           </div>
         ) : (
           <div className="gantt-body">
-            {/* Task names column */}
             <div className="task-names-column">
               {taskBars.map((taskBar) => (
-                <div key={taskBar.id} className="task-name-row"
-                     style={{ top: taskBar.row * rowHeight, height: taskHeight }}>
+                <div
+                  key={taskBar.id}
+                  className="task-name-row"
+                  style={{ top: taskBar.row * rowHeight, height: taskHeight }}
+                >
                   <div className="task-name-label">
                     <span className="task-name-text" title={taskBar.name}>
                       {taskBar.name}
@@ -171,7 +329,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
               ))}
             </div>
 
-            {/* Extracted Timeline component */}
             <Timeline
               timelineData={timelineData}
               tasks={taskBars}
@@ -208,11 +365,10 @@ export const GanttChartTest = () => {
   return (
     <div style={{ padding: '20px' }}>
       <h3>Gantt Chart Test</h3>
-      <GanttChart 
+      <GanttChart
         tasks={sampleTasks}
         currentYear={2023}
         currentQuarter={1}
-        onTaskClick={(task) => console.log('Task clicked:', task)}
       />
     </div>
   );
