@@ -40,14 +40,9 @@ import type { Task } from '../../../types';
 import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
-import { TaskForm } from '@/features/tasks';
+import { TaskForm, DetailsView } from '@/features/tasks';
 import { Button } from 'antd';
-import {
-  formatDate,
-  calculateDuration,
-  formatDurationEstonian
-} from '@/utils/dateUtils';
-import { VALIDATION_MESSAGES } from '@/utils/constants';
+import { formatDate } from '@/utils/dateUtils';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -124,35 +119,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     setPanelMode('chart');
   }, [onDeleteTask, selectedTask]);
 
-  const getTaskStatus = (
-    startDate: Date,
-    endDate: Date
-  ): { status: string; className: string } => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
-    const end = new Date(endDate);
-    end.setHours(0, 0, 0, 0);
-
-    if (now < start) {
-      return {
-        status: VALIDATION_MESSAGES.STATUS_UPCOMING,
-        className: 'status-upcoming'
-      };
-    } else if (now > end) {
-      return {
-        status: VALIDATION_MESSAGES.STATUS_COMPLETED,
-        className: 'status-completed'
-      };
-    } else {
-      return {
-        status: VALIDATION_MESSAGES.STATUS_IN_PROGRESS,
-        className: 'status-active'
-      };
-    }
-  };
-
   const getTaskFormData = (task: Task) => ({
     name: task.name,
     startDateStr: formatDate(task.startDate),
@@ -219,64 +185,15 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             />
           </div>
         ) : panelMode === 'details' && selectedTask ? (
-          <div className="gantt-body task-details-view">
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Ülesande nimi:</label>
-                  <div className="text-gray-900 font-medium">{selectedTask.name}</div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Värv:</label>
-                  <div className="flex items-center space-x-2">
-                    <div
-                      className="w-4 h-4 rounded border border-gray-300"
-                      style={{ backgroundColor: selectedTask.color }}
-                    />
-                    <span className="text-gray-600 text-sm">{selectedTask.color}</span>
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Alguskuupäev:</label>
-                  <div className="text-gray-900">{formatDate(selectedTask.startDate)}</div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Lõppkuupäev:</label>
-                  <div className="text-gray-900">{formatDate(selectedTask.endDate)}</div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Kestus:</label>
-                  <div className="text-gray-900">
-                    {formatDurationEstonian(calculateDuration(selectedTask.startDate, selectedTask.endDate))}
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Staatus:</label>
-                  <div className="text-gray-900">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${getTaskStatus(selectedTask.startDate, selectedTask.endDate).className}`}>
-                      {getTaskStatus(selectedTask.startDate, selectedTask.endDate).status}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Ülesande ID:</label>
-                  <div className="text-gray-500 text-sm font-mono">{selectedTask.id}</div>
-                </div>
-              </div>
-
-              <div className="flex space-x-3 pt-4 border-t border-gray-200">
-                <Button type="primary" onClick={() => setPanelMode('edit')}>
-                  Muuda
-                </Button>
-                <Button onClick={() => { setSelectedTask(null); setPanelMode('chart'); }}>
-                  Mine tagasi
-                </Button>
-                <Button danger onClick={() => setPanelMode('confirm-delete')}>
-                  Kustuta
-                </Button>
-              </div>
-            </div>
-          </div>
+          <DetailsView
+            task={selectedTask}
+            onEdit={() => setPanelMode('edit')}
+            onBack={() => {
+              setSelectedTask(null);
+              setPanelMode('chart');
+            }}
+            onDelete={() => setPanelMode('confirm-delete')}
+          />
         ) : panelMode === 'confirm-delete' && selectedTask ? (
           <div className="gantt-body task-details-view">
             <div className="space-y-4">
