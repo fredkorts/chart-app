@@ -189,9 +189,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
 
         {/* Timeline months header */}
         <div className="timeline-header">
-          <div className="task-names-column">
-            <div className="column-header">Tasks</div>
-          </div>
           <div className="timeline-months">
             {timelineData.months.map((month) => (
               <div
@@ -306,24 +303,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           </div>
         ) : (
           <div className="gantt-body">
-            <div className="task-names-column">
-              {taskBars.map((taskBar) => (
-                <div
-                  key={taskBar.id}
-                  className="task-name-row"
-                  style={{ top: taskBar.row * rowHeight, height: taskHeight }}
-                >
-                  <div className="task-name-label">
-                    <span className="task-name-text" title={taskBar.name}>
-                      {taskBar.name}
-                    </span>
-                    {taskBar.isPartial && (
-                      <span className="partial-indicator" title="Task spans multiple quarters">*</span>
-                    )}
-                  </div>
-                </div>
-              ))}
-            </div>
 
             <Timeline
               timelineData={timelineData}
