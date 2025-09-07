@@ -16,7 +16,7 @@ dayjs.extend(customParseFormat);
 export const TaskForm: React.FC<TaskFormProps> = ({
   onSubmit,
   initialData = { name: '', startDateStr: '', endDateStr: '' },
-  submitLabel = 'Add Task',
+  submitLabel = TASKS_ACTIONS.SAVE,
   onCancel
 }) => {
   const [formData, setFormData] = useState<TaskFormData>(initialData);

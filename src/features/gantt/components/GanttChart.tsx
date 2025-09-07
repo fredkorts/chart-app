@@ -149,6 +149,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           />
           <Button
             htmlType="button"
+            icon={panelMode === 'chart' ? '+' : '×'}
             onClick={() => {
               if (panelMode === 'chart') {
                 setPanelMode('add');

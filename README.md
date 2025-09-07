@@ -16,30 +16,6 @@ This project is a React + TypeScript based task management dashboard that allows
 
 **Responsive Design** – Optimized for both desktop and mobile. On smaller screens, form fields stack vertically and the timeline scrolls horizontally for easy access.
 
-## User Experience
-
-The app is designed to feel like:
-
-- A visual calendar for projects
-- A simple task tracker
-- A timeline tool for scheduling and planning
-
-## Benefits
-
-**Quick Overview** – See what's happening this quarter at a glance.
-
-**Easy Planning** – Identify available time slots for new work.
-
-**Visual Clarity** – Instantly spot overlapping or extended tasks.
-
-**Lightweight Management** – Add and track tasks in seconds.
-
-## Example Use Cases
-
-**Project managers** can set milestones per quarter, review progress in meetings, and prepare for upcoming phases.
-
-**Freelancers** can track multiple client projects, distinguish them by color, and assess availability before taking new work.
-
 ## Running Locally
 
 ### Prerequisites
@@ -133,30 +109,6 @@ The app uses the **Vitest** testing framework together with **React Testing Libr
 - **Assertions:** Vitest built-in assertion library
 - **Mocking:** Vitest built-in mocking capabilities
 
-### Test File Location
-
-Test files live alongside components in `__tests__` folders or at the end of a file as `*.test.tsx`/`*.test.ts`:
-
-```
-src/
-├── components/ui/__tests__/
-│   ├── Button.test.tsx
-│   ├── Input.test.tsx
-│   └── Modal.test.tsx
-├── features/tasks/hooks/__tests__/
-│   └── useTasks.test.ts
-└── utils/__tests__/
-    └── dateUtils.test.ts
-```
-
-### Writing Tests
-
-To add new tests:
-
-1. Create a `*.test.tsx` or `*.test.ts` file next to the component
-2. Use React Testing Library for component testing
-3. Use Vitest assertion methods (`expect`, `toBe`, `toContain`, etc.)
-
 ## Technologies
 
 - **Frontend:** React 18, TypeScript
@@ -165,27 +117,6 @@ To add new tests:
 - **Build:** Vite
 - **Testing:** Vitest, React Testing Library
 - **Code Quality:** ESLint, TypeScript
-
-## Development
-
-### Code Style
-
-The project follows:
-
-- Strict TypeScript typing
-- ESLint recommendations
-- Functional React (hooks)
-- Component-based architecture
-
-### Contributing
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/new-feature`)
-3. Make changes and add tests
-4. Run tests (`npm run test`)
-5. Commit changes (`git commit -m 'Add new feature'`)
-6. Push the branch (`git push origin feature/new-feature`)
-7. Create a Pull Request
 
 ## License
 
