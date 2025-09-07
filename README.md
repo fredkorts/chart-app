@@ -58,6 +58,8 @@ Before you start, make sure you have installed:
 - `npm run preview` - Previews the built version
 - `npm run test` - Runs unit tests
 - `npm run test:watch` - Runs tests in watch mode
+- `npm run test:e2e` - Runs end-to-end tests with Playwright
+- `npm run test:e2e:ui` - Runs end-to-end tests in Playwright UI
 - `npm run lint` - Checks code quality with ESLint
 
 ### Project Structure
@@ -108,6 +110,34 @@ The app uses the **Vitest** testing framework together with **React Testing Libr
 - **Rendering tests:** React Testing Library
 - **Assertions:** Vitest built-in assertion library
 - **Mocking:** Vitest built-in mocking capabilities
+
+## Running End-to-End Tests
+
+The app uses **Playwright** for end-to-end testing. Test files are located under `tests/e2e`.
+
+### Setup
+
+Install the required browsers before running the tests:
+
+```bash
+npx playwright install
+```
+
+### Running Tests
+
+1. **Run all e2e tests:**
+
+   ```bash
+   npm run test:e2e
+   ```
+
+2. **Run tests in interactive UI mode:**
+
+   ```bash
+   npm run test:e2e:ui
+   ```
+
+These commands automatically start a local Vite server before executing the tests.
 
 ## Technologies
 
