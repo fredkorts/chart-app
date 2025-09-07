@@ -200,7 +200,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
 
         {panelMode === 'add' ? (
           <div className="gantt-body task-form-view">
-            <TaskForm onSubmit={handleAddTask} onCancel={() => setPanelMode('chart')} />
+            <TaskForm
+              onSubmit={handleAddTask}
+              onCancel={() => setPanelMode('chart')}
+              submitLabel={GANTT_ACTIONS.ADD_TASK}
+            />
           </div>
         ) : panelMode === 'edit' && selectedTask ? (
           <div className="gantt-body task-form-view">
