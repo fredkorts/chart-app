@@ -187,7 +187,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
                 <div
                   key={`week-${week.weekNumber}-${week.startDate.toISOString()}`}
                   data-testid={`week-${week.weekNumber}`}
-                  className={`week-header${isCurrent ? ' current-week' : ''}`}
+                  className={`week-header${isCurrent ? ' current-week current' : ''}`}
                   style={{ width: `${width}%` }}
                 >
                   <span className="week-number">{week.weekNumber}</span>
