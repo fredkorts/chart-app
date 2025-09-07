@@ -5,7 +5,7 @@ import type { Task } from '@/types';
 import { GanttChart } from '@/features/gantt';
 import { useTasks } from '@/features/tasks';
 import { Layout } from 'antd';
-import { Content, Footer } from 'antd/es/layout/layout';
+import { Content } from 'antd/es/layout/layout';
 
 function App() {
   const {
