@@ -23,6 +23,13 @@
   min-width: 75vh;
 }
 
+.theme-toggle {
+  position: absolute;
+  bottom: 1rem;
+  right: 1rem;
+  border-radius: 9999px;
+}
+
 @media (max-width: 968px) {
   .app-container {
     flex-direction: column;

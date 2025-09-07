@@ -1,12 +1,13 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import './App.css';
 
 import type { Task } from '@/types';
 import { GanttChart } from '@/features/gantt';
 import { useTasks, TaskNotification } from '@/features/tasks';
 import type { TaskNotificationRef } from '@/features/tasks';
-import { Layout } from 'antd';
-import { Content } from 'antd/es/layout/layout';
+import { Layout, ConfigProvider, theme } from 'antd';
+
+const { Content } = Layout;
 
 function App() {
   const {
@@ -16,6 +17,7 @@ function App() {
     deleteTask,
   } = useTasks();
   const notificationRef = useRef<TaskNotificationRef>(null);
+  const [darkMode, setDarkMode] = useState(false);
   const [year, setYear] = useState<number>(new Date().getFullYear());
   const [quarter, setQuarter] = useState<1 | 2 | 3 | 4>(
     (Math.ceil((new Date().getMonth() + 1) / 3) as 1 | 2 | 3 | 4)
@@ -53,25 +55,40 @@ function App() {
     return result;
   };
 
+  useEffect(() => {
+    const themeName = darkMode ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', themeName);
+  }, [darkMode]);
+
   return (
-    <Layout style={{ height: '100vh', width: '100vw' }}>
-      <TaskNotification ref={notificationRef} />
-      <Layout className='app-container'>
-        <Content>
+    <ConfigProvider
+      theme={{ algorithm: darkMode ? theme.darkAlgorithm : theme.defaultAlgorithm }}
+    >
+      <Layout style={{ height: '100vh', width: '100vw', position: 'relative' }}>
+        <TaskNotification ref={notificationRef} />
+        <button
+          className="theme-toggle"
+          onClick={() => setDarkMode(prev => !prev)}
+        >
+          {darkMode ? 'Dark Mode' : 'Light Mode'}
+        </button>
+        <Layout className='app-container'>
+          <Content>
             <div className="gantt-container">
-            <GanttChart
-              tasks={tasks}
-              currentYear={year}
-              currentQuarter={quarter}
-              onQuarterChange={handleQuarterChange}
-              onAddTask={handleAddTask}
-              onEditTask={handleEditTask}
-              onDeleteTask={handleDeleteTask}
-            />
+              <GanttChart
+                tasks={tasks}
+                currentYear={year}
+                currentQuarter={quarter}
+                onQuarterChange={handleQuarterChange}
+                onAddTask={handleAddTask}
+                onEditTask={handleEditTask}
+                onDeleteTask={handleDeleteTask}
+              />
             </div>
-        </Content>
+          </Content>
+        </Layout>
       </Layout>
-    </Layout>
+    </ConfigProvider>
   );
 }
 
