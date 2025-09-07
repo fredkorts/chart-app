@@ -1,140 +1,141 @@
-# Graafiku Rakendus
+# Chart Application
 
-## Rakenduse Ülevaade
+## Application Overview
 
-See projekt on React + TypeScript põhine ülesannete haldamise dashboard, mis võimaldab kasutajatel hõlpsalt planeerida, visualiseerida ja hallata oma tööd kvartalipõhisel ajajoonel. Rakendus pakub selget, interaktiivset graafikut, kus ülesanded on kuvatud horisontaalsete ribadena, muutes lihtsaks näha ajakavasid, kattuvusi ja tähtaegu ühe pilguga.
+This project is a React + TypeScript based task management dashboard that allows users to easily plan, visualize, and manage their work on a quarter-based timeline. The application provides a clear, interactive chart where tasks are displayed as horizontal bars, making it easy to see schedules, overlaps, and deadlines at a glance.
 
-## Põhifunktsioonid
+## Key Features
 
-**Uute Ülesannete Lisamine** – Kasutajad saavad luua ülesandeid nimega, algus- ja lõppkuupäevaga. Sisendi valideerimine tagab õige vormingu (PP.KK.AAAA) ja loogilised kuupäevavahemikud.
+**Add New Tasks** – Users can create tasks with a name, start date, and end date. Input validation ensures correct format (DD.MM.YYYY) and logical date ranges.
 
-**Interaktiivne Ajajoon** – Ülesanded kuvatakse reageerival ajajoonel unikaalsete värvidega kiireks äratundmiseks. Kasutajad saavad vaadata kvartalite kaupa, kus mitut perioodi hõlmavad ülesanded kuvatakse osaliste ribadena.
+**Interactive Timeline** – Tasks are displayed on a responsive timeline with unique colors for quick recognition. Users can view by quarter, with tasks spanning multiple periods shown as partial bars.
 
-**Kvartali Navigeerimine** – Lihtsad noolnupud võimaldavad lülituda eelmiste ja järgmiste kvartalite vahel, uuendades graafikut ja nähtavaid ülesandeid vastavalt.
+**Quarter Navigation** – Simple arrow buttons let users switch between previous and next quarters, updating the chart and visible tasks accordingly.
 
-**Ülesannete Detailid** – Ülesandele klõpsates avaneb vaade detailse informatsiooniga.
+**Task Details** – Clicking a task opens a view with detailed information.
 
-**Reageeriv Disain** – Optimeeritud nii lauaarvuti kui mobiili jaoks. Väiksematel ekraanidel virnastatakse vormiväljad vertikaalselt ja ajajoon kerib horisontaalselt hõlpsa juurdepääsu jaoks.
+**Responsive Design** – Optimized for both desktop and mobile. On smaller screens, form fields stack vertically and the timeline scrolls horizontally for easy access.
 
-## Kasutajakogemus
+## User Experience
 
-Rakendus on disainitud tunduma nagu:
+The app is designed to feel like:
 
-- Visuaalne kalender projektide jaoks
-- Lihtne ülesannete jälgija
-- Ajajoonevahend ajastamise ja planeerimise jaoks
+- A visual calendar for projects
+- A simple task tracker
+- A timeline tool for scheduling and planning
 
-## Eelised
+## Benefits
 
-**Kiire Ülevaade** – Näe, mis toimub sel kvartalil ühe pilguga.
+**Quick Overview** – See what's happening this quarter at a glance.
 
-**Lihtne Planeerimine** – Tuvasta saadaolevad ajaslotid uue töö jaoks.
+**Easy Planning** – Identify available time slots for new work.
 
-**Visuaalne Selgus** – Märka koheselt kattuvaid või pikendatud ülesandeid.
+**Visual Clarity** – Instantly spot overlapping or extended tasks.
 
-**Kerge Haldamine** – Lisa ja jälgi ülesandeid sekunditega.
+**Lightweight Management** – Add and track tasks in seconds.
 
-## Näited Kasutusaladest
+## Example Use Cases
 
-**Projektijuhid** saavad määratleda verstaposti kvartali kohta, vaadata läbi edenemist koosolekutel ja valmistuda eelseisvaks etappideks.
+**Project managers** can set milestones per quarter, review progress in meetings, and prepare for upcoming phases.
 
-**Vabakutselised** saavad jälgida mitut kliendiprojekti, eristada neid värvide järgi ja hinnata kättesaadavust enne uue töö võtmist.
+**Freelancers** can track multiple client projects, distinguish them by color, and assess availability before taking new work.
 
-## Seadistamine Kohalikus Masinas
+## Running Locally
 
-### Eeltingimused
+### Prerequisites
 
-Enne alustamist veendu, et sul on installitud:
+Before you start, make sure you have installed:
 
-- **Node.js** (versioon 18 või uuem)
-- **npm** (tuleb Node.js-ga kaasa)
-- **Git** (repositooriumi kloonimiseks)
+- **Node.js** (version 18 or later)
+- **npm** (comes with Node.js)
+- **Git** (to clone the repository)
 
-### Installeerimisjuhised
+### Installation Instructions
 
-1. **Klooni repositoorium:**
+1. **Clone the repository:**
 
    ```bash
    git clone https://github.com/fredkorts/chart-app.git
    cd chart-app
    ```
 
-2. **Installi sõltuvused:**
+2. **Install dependencies:**
 
    ```bash
    npm install
    ```
 
-3. **Käivita arenduskeskkond:**
+3. **Run the development server:**
 
    ```bash
    npm run dev
    ```
 
-4. **Ava brauser:**
-   - Navigeeri aadressile `http://localhost:5173`
-   - Rakendus laadib automaatselt ja on valmis kasutamiseks
+4. **Open the browser:**
+   - Navigate to `http://localhost:5173`
+   - The app will load automatically and be ready to use
 
-### Saadaolevad Skriptid
+### Available Scripts
 
-- `npm run dev` - Käivitab arendusserveri (Vite)
-- `npm run build` - Ehitab produkstiooni versiooni
-- `npm run preview` - Eelvaatleb ehitatud versiooni
-- `npm run test` - Käivitab üksustestid
-- `npm run test:watch` - Käivitab testid jälgimisrežiimis
-- `npm run lint` - Kontrollib koodi kvaliteeti ESLint-ga
+- `npm run dev` - Starts the development server (Vite)
+- `npm run build` - Builds the production version
+- `npm run preview` - Previews the built version
+- `npm run test` - Runs unit tests
+- `npm run test:watch` - Runs tests in watch mode
+- `npm run lint` - Checks code quality with ESLint
 
-### Projekti Struktuur
+### Project Structure
 
 ```
 src/
-├── components/          # Taaskasutatavad UI komponendid
-│   ├── common/         # Üldised komponendid (ErrorDisplay, LoadingSpinner)
-│   └── ui/             # UI komponendid (Button, Input, Modal, jne)
-├── features/           # Funktsionaalsuspõhised moodulid
-│   ├── gantt/         # Ganti diagrammi komponendid ja loogika
-│   └── tasks/         # Ülesannete haldamise funktsioonid
-├── hooks/             # Kohandatud React hookid
-├── types/             # TypeScript tüübidefinitsioonid
-├── utils/             # Abitööud ja konstandid
-└── test/              # Testi seadistused ja abivahendid
+├── components/          # Reusable UI components
+│   ├── common/         # General components (ErrorDisplay, LoadingSpinner)
+│   └── ui/             # UI components (Button, Input, Modal, etc.)
+├── features/           # Feature-based modules
+│   ├── gantt/         # Gantt chart components and logic
+│   └── tasks/         # Task management features
+├── hooks/             # Custom React hooks
+├── types/             # TypeScript type definitions
+├── utils/             # Utilities and constants
+└── test/              # Test setup and helpers
 ```
 
-## Ükustestide Käivitamine
+## Running Unit Tests
 
-Rakendus kasutab **Vitest** testimisraamistikku koos **React Testing Library**-ga.
+The app uses the **Vitest** testing framework together with **React Testing Library**.
 
-### Testide Käivitamine
+### Running Tests
 
-1. **Kõigi testide käivitamine:**
+1. **Run all tests:**
 
    ```bash
    npm run test
    ```
 
-2. **Testide käivitamine jälgimisrežiimis:**
+2. **Run tests in watch mode:**
 
    ```bash
    npm run test:watch
    ```
 
-   See jälgib failimuudatusi ja käivitab testid automaatselt uuesti.
+   This watches files and reruns tests automatically.
 
-3. **Testide käivitamine katvuse raportiga:**
+3. **Run tests with coverage report:**
+
    ```bash
    npm run test -- --coverage
    ```
 
-### Testimise Seadistus
+### Testing Setup
 
-- **Testimisraamistik:** Vitest
-- **Renderdamise testimine:** React Testing Library
-- **Assertsioonid:** Vitest sisseehitatud assertion library
-- **Mokimine:** Vitest sisseehitatud mokimise võimalused
+- **Test framework:** Vitest
+- **Rendering tests:** React Testing Library
+- **Assertions:** Vitest built-in assertion library
+- **Mocking:** Vitest built-in mocking capabilities
 
-### Testifailide Asukoht
+### Test File Location
 
-Testifailid asuvad komponentide kõrval `__tests__` kaustades või faili lõpus `*.test.tsx`/`*.test.ts` formaadis:
+Test files live alongside components in `__tests__` folders or at the end of a file as `*.test.tsx`/`*.test.ts`:
 
 ```
 src/
@@ -148,44 +149,44 @@ src/
     └── dateUtils.test.ts
 ```
 
-### Testide Kirjutamine
+### Writing Tests
 
-Uute testide lisamiseks:
+To add new tests:
 
-1. Loo `*.test.tsx` või `*.test.ts` fail komponendi kõrvale
-2. Kasuta React Testing Library-t komponendite testimiseks
-3. Kasuta Vitest assertion meetodeid (`expect`, `toBe`, `toContain`, jne)
+1. Create a `*.test.tsx` or `*.test.ts` file next to the component
+2. Use React Testing Library for component testing
+3. Use Vitest assertion methods (`expect`, `toBe`, `toContain`, etc.)
 
-## Tehnoloogiad
+## Technologies
 
 - **Frontend:** React 18, TypeScript
-- **UI Teek:** Ant Design
-- **Stiilimine:** CSS Modules
-- **Ehitamine:** Vite
-- **Testimine:** Vitest, React Testing Library
-- **Kood Kvaliteet:** ESLint, TypeScript
+- **UI Library:** Ant Design
+- **Styling:** CSS Modules
+- **Build:** Vite
+- **Testing:** Vitest, React Testing Library
+- **Code Quality:** ESLint, TypeScript
 
-## Arendus
+## Development
 
-### Koodi Stiil
+### Code Style
 
-Projekt järgib:
+The project follows:
 
-- TypeScript range tüüpimist
-- ESLint soovitusi
-- Funktsionaalne React (hooks)
-- Komponendipõhine arhitektuur
+- Strict TypeScript typing
+- ESLint recommendations
+- Functional React (hooks)
+- Component-based architecture
 
-### Panustamine
+### Contributing
 
-1. Fork-i repositoorium
-2. Loo uus branch (`git checkout -b feature/uus-funktsioon`)
-3. Tee muudatused ja lisa testid
-4. Käivita testid (`npm run test`)
-5. Commit-i muudatused (`git commit -m 'Lisa uus funktsioon'`)
-6. Push-i branch-i (`git push origin feature/uus-funktsioon`)
-7. Loo Pull Request
+1. Fork the repository
+2. Create a new branch (`git checkout -b feature/new-feature`)
+3. Make changes and add tests
+4. Run tests (`npm run test`)
+5. Commit changes (`git commit -m 'Add new feature'`)
+6. Push the branch (`git push origin feature/new-feature`)
+7. Create a Pull Request
 
-## Litsents
+## License
 
-See projekt on litsentseeritud MIT litsentsi all.
+This project is licensed under the MIT license.
