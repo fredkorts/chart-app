@@ -1,6 +1,5 @@
 // Components
 export { TaskForm } from './components/TaskForm';
-export { TaskDetailsModal } from './components/TaskDetailsModal';
 export { DetailsView } from './components/DetailsView';
 export { TaskNotification } from './components/TaskNotification';
 
@@ -15,8 +14,6 @@ export * from './constants';
 export type {
   TaskValidationErrors,
   TaskFormProps,
-  TaskDetailsModalProps,
-  ModalMode,
   TaskOperationResult,
   UseTasksOptions,
 } from './types/tasks.types';

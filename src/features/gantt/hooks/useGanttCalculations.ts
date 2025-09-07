@@ -48,7 +48,7 @@ interface UseGanttCalculationsReturn {
   taskHeight: number;
 }
 
-const DEFAULT_TASK_HEIGHT = 28;
+const DEFAULT_TASK_HEIGHT = 38;
 const DEFAULT_TASK_GAP = 4;
 const DEFAULT_HEADER_HEIGHT = 60;
 

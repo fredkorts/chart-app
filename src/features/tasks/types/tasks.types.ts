@@ -1,23 +1,6 @@
 import type { Task, TaskFormData } from '../../../types';
 
 /**
- * Modal mode for TaskDetailsModal
- */
-export type ModalMode = 'view' | 'edit' | 'confirm-delete';
-
-/**
- * Props for TaskDetailsModal component
- */
-export interface TaskDetailsModalProps {
-  task: Task;
-  isOpen: boolean;
-  onClose: () => void;
-  onEdit: (task: Task) => Promise<TaskOperationResult> | void;
-  onDelete: (taskId: string) => Promise<TaskOperationResult> | void;
-  readOnly?: boolean;
-}
-
-/**
  * Unified validation errors interface for task operations
  */
 export interface TaskValidationErrors {
