@@ -26,6 +26,7 @@ describe('GanttChart', () => {
     const weekNumber = getWeekNumber(currentDate);
     const weekEl = screen.getByTestId(`week-${weekNumber}`);
     expect(weekEl).toHaveClass('current-week');
+    expect(weekEl).toHaveClass('current');
     vi.useRealTimers();
   });
 

@@ -139,7 +139,7 @@ const TimelineComponent: React.FC<TimelineProps> = ({
             return (
               <div
                 key={`week-${week.weekNumber}-${week.startDate.toISOString()}`}
-                className={`week-column${isCurrent ? ' current-week' : ''}`}
+                className={`week-column${isCurrent ? ' current-week current' : ''}`}
                 style={{ width: `${width}%` }}
               />
             );
