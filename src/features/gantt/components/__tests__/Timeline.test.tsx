@@ -14,6 +14,7 @@ const timelineData: TimelineData = {
     { name: 'Veebruar', date: new Date(2024, 1, 1), daysInMonth: 29 },
     { name: 'Märts', date: new Date(2024, 2, 1), daysInMonth: 31 },
   ],
+  weeks: []
 };
 
 const task1: TaskBarData = {
@@ -38,6 +39,20 @@ describe('Timeline', () => {
       <Timeline timelineData={timelineData} tasks={[]} rowHeight={40} taskHeight={20} />
     );
     expect(container.getElementsByClassName('month-column').length).toBe(3);
+  });
+
+  it('renders week columns when weeks provided', () => {
+    const timelineWithWeeks: TimelineData = {
+      ...timelineData,
+      weeks: [
+        { startDate: new Date(2024, 0, 1), endDate: new Date(2024, 0, 7), weekNumber: 1, days: 7 },
+        { startDate: new Date(2024, 0, 8), endDate: new Date(2024, 0, 14), weekNumber: 2, days: 7 }
+      ]
+    };
+    const { container } = render(
+      <Timeline timelineData={timelineWithWeeks} tasks={[]} rowHeight={40} taskHeight={20} />
+    );
+    expect(container.getElementsByClassName('week-column').length).toBe(2);
   });
 
   it('renders task bars', () => {

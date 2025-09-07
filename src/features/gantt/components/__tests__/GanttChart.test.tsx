@@ -2,10 +2,11 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { GanttChart } from '../GanttChart';
 import { GANTT_ACTIONS, GANTT_NAVIGATION } from '../../constants';
+import { getWeekNumber } from '@/utils/dateUtils';
 
 const baseProps = {
   currentYear: 2024,
-  currentQuarter: 1 as 1,
+  currentQuarter: 1 as const,
   tasks: [],
   onQuarterChange: vi.fn(),
 };
@@ -16,6 +17,16 @@ describe('GanttChart', () => {
     expect(screen.getByText('Jaanuar')).toBeInTheDocument();
     expect(screen.getByText('Veebruar')).toBeInTheDocument();
     expect(screen.getByText('Märts')).toBeInTheDocument();
+  });
+
+  it('renders weeks and highlights current week', () => {
+    const currentDate = new Date(2024, 0, 10); // within week 2
+    vi.setSystemTime(currentDate);
+    render(<GanttChart {...baseProps} />);
+    const weekNumber = getWeekNumber(currentDate);
+    const weekEl = screen.getByTestId(`week-${weekNumber}`);
+    expect(weekEl).toHaveClass('current-week');
+    vi.useRealTimers();
   });
 
   it('shows empty state when no tasks', () => {
