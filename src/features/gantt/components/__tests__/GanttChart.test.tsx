@@ -21,6 +21,7 @@ describe('GanttChart', () => {
 
   it('renders weeks and highlights current week', () => {
     const currentDate = new Date(2024, 0, 10); // within week 2
+    vi.useFakeTimers();
     vi.setSystemTime(currentDate);
     render(<GanttChart {...baseProps} />);
     const weekNumber = getWeekNumber(currentDate);
