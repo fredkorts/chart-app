@@ -75,6 +75,10 @@
   background: #f8fafc;
 }
 
+.timeline-header {
+  border-bottom: 1px solid #e5e7eb;
+}
+
 .gantt-content {
   position: relative;
   overflow: hidden;
@@ -167,5 +171,16 @@
 .empty-icon {
   font-size: 2rem;
   margin-bottom: 0.5rem;
+}
+
+@media (max-width: 968px) {
+  .gantt-content.year-view {
+    overflow-x: scroll;
+  }
+
+  .gantt-content.year-view .timeline-header,
+  .gantt-content.year-view .gantt-body {
+    min-width: 1000px;
+  }
 }
 

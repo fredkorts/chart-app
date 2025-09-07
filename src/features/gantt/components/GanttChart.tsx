@@ -158,7 +158,10 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             {panelMode === 'chart' ? GANTT_ACTIONS.ADD_TASK : GANTT_ACTIONS.VIEW_CHART}
           </Button>
         </div>
+      </div>
 
+      {/* Chart content */}
+      <div className={`gantt-content ${viewMode === 'year' ? 'year-view' : ''}`}>
         {/* Timeline months header */}
         <div className="timeline-header">
           <div className="timeline-months">
@@ -173,10 +176,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Chart content */}
-      <div className="gantt-content">
         {panelMode === 'add' ? (
           <div className="gantt-body task-form-view">
             <TaskForm onSubmit={handleAddTask} onCancel={() => setPanelMode('chart')} />
