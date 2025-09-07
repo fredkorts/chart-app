@@ -1,0 +1,219 @@
+/* Styles for Gantt chart components */
+
+.gantt-chart {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 1px solid var(--border-color);
+  background-color: var(--background-color);
+  font-size: 12px;
+}
+
+.gantt-header {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--header-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.gantt-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.gantt-content {
+  min-height: 40rem;
+  max-height: 100vh;
+}
+
+.quarter-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+}
+
+.nav-button {
+  background: var(--nav-button-background);
+  border: none;
+  border-radius: 4px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.nav-button:hover:not(:disabled) {
+  background: var(--nav-button-hover);
+}
+
+.nav-button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quarter-label h2 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.timeline-months {
+  display: flex;
+}
+
+.month-header {
+  flex: 1;
+  text-align: center;
+  padding: 0.5rem 0;
+  border-left: 1px solid var(--border-color);
+  background: var(--header-background);
+}
+
+.timeline-header {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.timeline-weeks {
+  display: flex;
+}
+
+.week-header {
+  text-align: center;
+  padding: 0.25rem 0;
+  border-left: 1px solid var(--border-color);
+  background: var(--subtle-background);
+  font-size: 0.75rem;
+}
+
+.week-header.current-week,
+.week-header.current {
+  background: var(--current-week-background);
+}
+
+.gantt-content {
+  position: relative;
+  overflow: hidden;
+}
+
+.gantt-body {
+  position: relative;
+}
+
+.gantt-body.task-form-view {
+  display: block;
+  padding: 1rem;
+}
+
+.quarter-label {
+  width: 60px;
+  text-align: center;
+}
+
+.timeline-area {
+  position: relative;
+  flex: 1;
+}
+
+.timeline-grid {
+  position: absolute;
+  inset: 0;
+}
+
+.month-columns,
+.week-columns {
+  position: absolute;
+  inset: 0;
+  display: flex;
+}
+
+.month-column {
+  flex: 1;
+  border-left: 2px solid var(--border-color);
+  height: 100vh;
+}
+
+.week-column {
+  border-left: 1px solid var(--subtle-background);
+}
+
+.week-column.current-week,
+.week-column.current {
+  background: var(--current-week-background);
+}
+
+.task-bar {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  border-radius: 4px;
+  cursor: pointer;
+  overflow: hidden;
+  padding: 0 0.8rem;
+}
+
+.task-bar.hovered {
+  filter: brightness(1.1);
+}
+
+.task-bar-content {
+  padding: 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-delete-confirm {
+  margin-top: 5rem;
+}
+
+.continuation-left,
+.continuation-right {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+.continuation-left {
+  left: 2px;
+}
+
+.continuation-right {
+  right: 2px;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--empty-text-color);
+  text-align: center;
+  margin-top: 5rem;
+}
+
+.empty-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 968px) {
+  .gantt-content.year-view {
+    overflow-x: scroll;
+  }
+
+  .gantt-content.year-view .timeline-header,
+  .gantt-content.year-view .gantt-body {
+    min-width: 1000px;
+  }
+}
+

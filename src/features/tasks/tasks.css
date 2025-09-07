@@ -1,0 +1,20 @@
+/* Task form styling adjustments */
+.task-form .form-fields {
+  margin-bottom: 1rem;
+}
+
+.task-form .form-fields > * + * {
+  margin-top: 1rem;
+}
+
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.edit-form-actions {
+  justify-content: flex-start;
+  margin-left: 1rem;
+}
