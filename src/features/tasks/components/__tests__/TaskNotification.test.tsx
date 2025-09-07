@@ -1,5 +1,6 @@
 import { render } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
+import { createRef } from 'react';
 import { TaskNotification, type TaskNotificationRef } from '../TaskNotification';
 import { TASKS_NOTIFICATIONS } from '../../constants';
 
@@ -18,7 +19,7 @@ vi.mock('antd', () => ({
 
 describe('TaskNotification', () => {
   it('showAdd triggers success notification', () => {
-    const ref = { current: null } as React.RefObject<TaskNotificationRef>;
+    const ref = createRef<TaskNotificationRef>();
     render(<TaskNotification ref={ref} />);
 
     ref.current?.showAdd();
@@ -28,7 +29,7 @@ describe('TaskNotification', () => {
   });
 
   it('showDelete triggers warning notification with task name', () => {
-    const ref = { current: null } as React.RefObject<TaskNotificationRef>;
+    const ref = createRef<TaskNotificationRef>();
     render(<TaskNotification ref={ref} />);
 
     ref.current?.showDelete('Example');
@@ -40,7 +41,7 @@ describe('TaskNotification', () => {
   });
 
   it('showUpdate triggers info notification', () => {
-    const ref = { current: null } as React.RefObject<TaskNotificationRef>;
+    const ref = createRef<TaskNotificationRef>();
     render(<TaskNotification ref={ref} />);
 
     ref.current?.showUpdate();

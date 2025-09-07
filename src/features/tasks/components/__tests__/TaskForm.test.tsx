@@ -33,10 +33,13 @@ describe('TaskForm', () => {
           startDateStr: formatDate(start),
           endDateStr: formatDate(end),
         }}
+        submitLabel={TASKS_ACTIONS.ADD_TASK}
       />
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Add Task' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: TASKS_ACTIONS.ADD_TASK })
+    );
 
     await waitFor(() => expect(onSubmit).toHaveBeenCalled());
     expect(onSubmit).toHaveBeenCalledWith(
@@ -51,9 +54,11 @@ describe('TaskForm', () => {
 
   it('shows validation errors when fields are empty', () => {
     const onSubmit = vi.fn();
-    render(<TaskForm onSubmit={onSubmit} />);
+    render(<TaskForm onSubmit={onSubmit} submitLabel={TASKS_ACTIONS.ADD_TASK} />);
 
-    fireEvent.click(screen.getByRole('button', { name: 'Add Task' }));
+    fireEvent.click(
+      screen.getByRole('button', { name: TASKS_ACTIONS.ADD_TASK })
+    );
 
     expect(screen.getByText(VALIDATION_MESSAGES.TASK_NAME_REQUIRED)).toBeInTheDocument();
     expect(screen.getByText(VALIDATION_MESSAGES.START_DATE_REQUIRED)).toBeInTheDocument();

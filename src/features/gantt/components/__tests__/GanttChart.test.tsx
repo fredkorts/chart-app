@@ -45,6 +45,6 @@ describe('GanttChart', () => {
   it('shows task form when add task is clicked', () => {
     render(<GanttChart {...baseProps} />);
     fireEvent.click(screen.getByText(GANTT_ACTIONS.ADD_TASK));
-    expect(screen.getByText('Add Task')).toBeInTheDocument();
+    expect(screen.getByText(GANTT_ACTIONS.ADD_TASK)).toBeInTheDocument();
   });
 });
