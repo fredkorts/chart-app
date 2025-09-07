@@ -111,7 +111,8 @@
 
 .month-column {
   flex: 1;
-  border-left: 1px solid #e5e7eb;
+  border-left: 2px solid #e8e7e7;
+  height: 100vh;
 }
 
 .task-bar {

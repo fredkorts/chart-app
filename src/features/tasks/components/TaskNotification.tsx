@@ -16,21 +16,21 @@ export const TaskNotification = forwardRef<TaskNotificationRef>((_, ref) => {
       api.success({
         message: TASKS_NOTIFICATIONS.TASK_ADDED,
         placement: 'topRight',
-        duration: 5,
+        duration: 3,
       });
     },
     showDelete: (taskName: string) => {
       api.warning({
         message: `${TASKS_NOTIFICATIONS.TASK_DELETED} ${taskName}`,
         placement: 'topRight',
-        duration: 5,
+        duration: 3,
       });
     },
     showUpdate: () => {
       api.info({
         message: TASKS_NOTIFICATIONS.TASK_UPDATED,
         placement: 'topRight',
-        duration: 5,
+        duration: 3,
       });
     },
   }));
