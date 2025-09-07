@@ -17,9 +17,7 @@
   },
   "dependencies": {
     "antd": "^5.27.2",
-    "clsx": "^2.1.1",
     "dayjs": "^1.11.18",
-    "lucide-react": "^0.542.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1"
   },
