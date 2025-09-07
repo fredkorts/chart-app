@@ -117,20 +117,34 @@ const TimelineComponent: React.FC<TimelineProps> = ({
   className = ''
 }) => {
   const [hovered, setHovered] = useState<string | null>(null);
+  const totalDays = (timelineData.endDate.getTime() - timelineData.startDate.getTime()) / (1000 * 60 * 60 * 24) + 1;
+  const now = new Date();
 
   return (
     <div className={`timeline-area ${className}`}>
       <div className="timeline-grid">
-        {timelineData.months.map((month, idx) => (
-          <div
-            key={month.name}
-            className="month-column"
-            style={{
-              left: `${(idx / timelineData.months.length) * 100}%`,
-              width: `${100 / timelineData.months.length}%`
-            }}
-          />
-        ))}
+        <div className="month-columns">
+          {timelineData.months.map((month) => (
+            <div
+              key={month.name}
+              className="month-column"
+              style={{ width: `${100 / timelineData.months.length}%` }}
+            />
+          ))}
+        </div>
+        <div className="week-columns">
+          {timelineData.weeks.map((week) => {
+            const width = (week.days / totalDays) * 100;
+            const isCurrent = now >= week.startDate && now <= week.endDate;
+            return (
+              <div
+                key={`week-${week.weekNumber}-${week.startDate.toISOString()}`}
+                className={`week-column${isCurrent ? ' current-week' : ''}`}
+                style={{ width: `${width}%` }}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {tasks.map(task => (

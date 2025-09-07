@@ -79,6 +79,22 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
+.timeline-weeks {
+  display: flex;
+}
+
+.week-header {
+  text-align: center;
+  padding: 0.25rem 0;
+  border-left: 1px solid #e5e7eb;
+  background: #f1f5f9;
+  font-size: 0.75rem;
+}
+
+.week-header.current-week {
+  background: #e0f2fe;
+}
+
 .gantt-content {
   position: relative;
   overflow: hidden;
@@ -106,6 +122,12 @@
 .timeline-grid {
   position: absolute;
   inset: 0;
+}
+
+.month-columns,
+.week-columns {
+  position: absolute;
+  inset: 0;
   display: flex;
 }
 
@@ -113,6 +135,14 @@
   flex: 1;
   border-left: 2px solid #e8e7e7;
   height: 100vh;
+}
+
+.week-column {
+  border-left: 1px solid #f1f5f9;
+}
+
+.week-column.current-week {
+  background: rgba(14, 165, 233, 0.1);
 }
 
 .task-bar {

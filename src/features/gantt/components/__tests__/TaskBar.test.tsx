@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { TaskBar } from '../TaskBar';
@@ -18,8 +19,10 @@ const baseTask: TaskBarData = {
 };
 
 describe('TaskBar', () => {
-  const renderBar = (task: TaskBarData = baseTask, props: any = {}) =>
-    render(<TaskBar task={task} rowHeight={40} taskHeight={20} {...props} />);
+  const renderBar = (
+    task: TaskBarData = baseTask,
+    props: Partial<React.ComponentProps<typeof TaskBar>> = {}
+  ) => render(<TaskBar task={task} rowHeight={40} taskHeight={20} {...props} />);
 
   it('renders task name', () => {
     renderBar();
