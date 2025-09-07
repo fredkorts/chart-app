@@ -41,7 +41,7 @@ import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
 import { TaskForm, DetailsView } from '@/features/tasks';
-import { Button } from 'antd';
+import { Button, Flex, Space } from 'antd';
 import { formatDate } from '@/utils/dateUtils';
 
 interface GanttChartProps {
@@ -196,17 +196,17 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           />
         ) : panelMode === 'confirm-delete' && selectedTask ? (
           <div className="gantt-body task-details-view">
-            <div className="space-y-4">
-              <p className="text-center">Kas soovite kustutada selle ülesande?</p>
-              <div className="flex space-x-3 justify-center pt-4">
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <p style={{ textAlign: 'center' }}>Kas soovite kustutada selle ülesande?</p>
+              <Flex gap="small" justify="center" style={{ paddingTop: 16 }}>
                 <Button onClick={() => { setSelectedTask(null); setPanelMode('chart'); }}>
                   Ei
                 </Button>
                 <Button danger onClick={handleDeleteConfirm}>
                   Jah
                 </Button>
-              </div>
-            </div>
+              </Flex>
+            </Space>
           </div>
         ) : quarterTasks.length === 0 ? (
           <div className="empty-state">

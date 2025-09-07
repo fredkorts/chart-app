@@ -3,8 +3,17 @@ import type { Task } from '@/types';
 import { TaskForm } from './TaskForm';
 import { formatDate, calculateDuration, formatDurationEstonian } from '@/utils/dateUtils';
 import { VALIDATION_MESSAGES } from '@/utils/constants';
-import { Modal, LoadingSpinner, ErrorDisplay } from '@/components';
-import { Button } from 'antd';
+import { ErrorDisplay } from '@/components';
+import {
+  Button,
+  Modal,
+  Spin,
+  Descriptions,
+  Tag,
+  Typography,
+  Flex,
+  Space
+} from 'antd';
 import type { TaskDetailsModalProps, ModalMode } from '../types/tasks.types';
 
 export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
@@ -28,7 +37,7 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   }, [isOpen, task]);
 
   // Get task status in Estonian
-  const getTaskStatus = (startDate: Date, endDate: Date): { status: string; className: string } => {
+  const getTaskStatus = (startDate: Date, endDate: Date): { status: string; color: string } => {
     const now = new Date();
     now.setHours(0, 0, 0, 0);
     const start = new Date(startDate);
@@ -37,11 +46,11 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
     end.setHours(0, 0, 0, 0);
 
     if (now < start) {
-      return { status: VALIDATION_MESSAGES.STATUS_UPCOMING, className: 'status-upcoming' };
+      return { status: VALIDATION_MESSAGES.STATUS_UPCOMING, color: 'blue' };
     } else if (now > end) {
-      return { status: VALIDATION_MESSAGES.STATUS_COMPLETED, className: 'status-completed' };
+      return { status: VALIDATION_MESSAGES.STATUS_COMPLETED, color: 'default' };
     } else {
-      return { status: VALIDATION_MESSAGES.STATUS_IN_PROGRESS, className: 'status-active' };
+      return { status: VALIDATION_MESSAGES.STATUS_IN_PROGRESS, color: 'green' };
     }
   };
 
@@ -131,97 +140,57 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   if (!task) return null;
 
   return (
-    <Modal 
-      isOpen={isOpen} 
-      onClose={handleModalClose} 
+    <Modal
+      open={isOpen}
+      onCancel={handleModalClose}
       title={getModalTitle()}
-      size="lg"
+      footer={null}
+      centered
+      width={720}
     >
-      {/* Loading Overlay */}
       {isLoading && (
-        <div className="flex items-center justify-center py-8">
-          <LoadingSpinner size="lg" className="mr-3" />
-          <span className="text-gray-600">Töötleb...</span>
-        </div>
+        <Flex align="center" justify="center" style={{ padding: 32 }}>
+          <Spin size="large" style={{ marginRight: 12 }} />
+          <Typography.Text>Töötleb...</Typography.Text>
+        </Flex>
       )}
 
-      {/* Error Display */}
       {error && (
-        <ErrorDisplay 
-          errors={[{ field: 'general', message: error }]} 
-          language="et"
-          className="mb-4"
-        />
+        <ErrorDisplay errors={[{ field: 'general', message: error }]} />
       )}
 
-      {/* Content based on mode */}
       {!isLoading && (
         <>
           {mode === 'view' && (
-            <div className="space-y-4">
-              {/* Task Details */}
-              <div className="grid grid-cols-1 gap-4">
-                {/* Task Name */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Ülesande nimi:</label>
-                  <div className="text-gray-900 font-medium">{task.name}</div>
-                </div>
-
-                {/* Task Color */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Värv:</label>
-                  <div className="flex items-center space-x-2">
-                    <div 
-                      className="w-4 h-4 rounded border border-gray-300"
-                      style={{ backgroundColor: task.color }}
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <Descriptions column={1} bordered>
+                <Descriptions.Item label="Ülesande nimi">{task.name}</Descriptions.Item>
+                <Descriptions.Item label="Värv">
+                  <Flex align="center" gap="small">
+                    <div
+                      style={{ width: 16, height: 16, borderRadius: 4, border: '1px solid #d1d5db', backgroundColor: task.color }}
                       aria-label={`Ülesande värv: ${task.color}`}
                     />
-                    <span className="text-gray-600 text-sm">{task.color}</span>
-                  </div>
-                </div>
+                    <Typography.Text type="secondary">{task.color}</Typography.Text>
+                  </Flex>
+                </Descriptions.Item>
+                <Descriptions.Item label="Alguskuupäev">{formatDate(task.startDate)}</Descriptions.Item>
+                <Descriptions.Item label="Lõppkuupäev">{formatDate(task.endDate)}</Descriptions.Item>
+                <Descriptions.Item label="Kestus">
+                  {formatDurationEstonian(calculateDuration(task.startDate, task.endDate))}
+                </Descriptions.Item>
+                <Descriptions.Item label="Staatus">
+                  <Tag color={getTaskStatus(task.startDate, task.endDate).color}>
+                    {getTaskStatus(task.startDate, task.endDate).status}
+                  </Tag>
+                </Descriptions.Item>
+                <Descriptions.Item label="Ülesande ID">
+                  <Typography.Text type="secondary" code>{task.id}</Typography.Text>
+                </Descriptions.Item>
+              </Descriptions>
 
-                {/* Start Date */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Alguskuupäev:</label>
-                  <div className="text-gray-900">{formatDate(task.startDate)}</div>
-                </div>
-
-                {/* End Date */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Lõppkuupäev:</label>
-                  <div className="text-gray-900">{formatDate(task.endDate)}</div>
-                </div>
-
-                {/* Duration */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Kestus:</label>
-                  <div className="text-gray-900">
-                    {formatDurationEstonian(calculateDuration(task.startDate, task.endDate))}
-                  </div>
-                </div>
-
-                {/* Status */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Staatus:</label>
-                  <div className="text-gray-900">
-                    <span className={`inline-flex px-2 py-1 rounded-full text-xs font-medium ${
-                      getTaskStatus(task.startDate, task.endDate).className
-                    }`}>
-                      {getTaskStatus(task.startDate, task.endDate).status}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Task ID */}
-                <div className="flex flex-col">
-                  <label className="text-sm font-medium text-gray-700 mb-1">Ülesande ID:</label>
-                  <div className="text-gray-500 text-sm font-mono">{task.id}</div>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
               {!readOnly && (
-                <div className="flex space-x-3 pt-4 border-t border-gray-200">
+                <Flex gap="small" style={{ paddingTop: 16, borderTop: '1px solid #e5e7eb' }}>
                   <Button
                     type="primary"
                     onClick={() => setMode('edit')}
@@ -236,49 +205,40 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                   >
                     Kustuta
                   </Button>
-                </div>
+                </Flex>
               )}
-            </div>
+            </Space>
           )}
 
           {mode === 'edit' && (
-            <div>
-              <TaskForm
-                onSubmit={handleEditTask}
-                initialData={getTaskFormData()}
-                submitLabel="Salvesta muudatused"
-                onCancel={() => setMode('view')}
-              />
-            </div>
+            <TaskForm
+              onSubmit={handleEditTask}
+              initialData={getTaskFormData()}
+              submitLabel="Salvesta muudatused"
+              onCancel={() => setMode('view')}
+            />
           )}
 
           {mode === 'confirm-delete' && (
-            <div className="space-y-4">
-              <div className="text-center">
-                <p className="text-gray-900 mb-2">
+            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
+              <div style={{ textAlign: 'center' }}>
+                <Typography.Paragraph>
                   Kas olete kindel, et soovite kustutada ülesande <strong>"{task.name}"</strong>?
-                </p>
-                <p className="text-red-600 text-sm">
+                </Typography.Paragraph>
+                <Typography.Paragraph type="danger">
                   Seda toimingut ei saa tagasi võtta.
-                </p>
+                </Typography.Paragraph>
               </div>
 
-              <div className="flex space-x-3 justify-center pt-4">
-                <Button
-                  onClick={() => setMode('view')}
-                  disabled={isLoading}
-                >
+              <Flex gap="small" justify="center" style={{ paddingTop: 16 }}>
+                <Button onClick={() => setMode('view')} disabled={isLoading}>
                   Tühista
                 </Button>
-                <Button
-                  danger
-                  onClick={handleDeleteTask}
-                  disabled={isLoading}
-                >
+                <Button danger onClick={handleDeleteTask} disabled={isLoading}>
                   {isLoading ? 'Kustutan...' : 'Jah, kustuta'}
                 </Button>
-              </div>
-            </div>
+              </Flex>
+            </Space>
           )}
         </>
       )}

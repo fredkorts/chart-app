@@ -5,7 +5,7 @@ import { parseEstonianDate } from '@/utils/dateUtils';
 import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
 import { useTaskValidation } from '../hooks/useTaskValidation';
 import { ErrorDisplay } from '@/components';
-import { DatePicker, Button, Input } from 'antd';
+import { DatePicker, Button, Input, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { TaskFormProps, TaskValidationErrors } from '../types/tasks.types';
@@ -104,7 +104,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
 
       <div className="form-fields">
         {/* Task Name Field */}
-        <div className="w-full">
+        <div>
           <Input
             id="taskName"
             value={formData.name}
@@ -113,16 +113,17 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             disabled={isSubmitting}
             maxLength={100}
             autoComplete="off"
+            style={{ width: '100%' }}
           />
           {errors.name && (
-            <p className="mt-1 text-sm text-red-600" role="alert">
+            <Typography.Text type="danger" style={{ display: 'block', marginTop: 4 }}>
               {errors.name}
-            </p>
+            </Typography.Text>
           )}
         </div>
 
         {/* Date Range Field */}
-        <div className="w-full">
+        <div>
           <DatePicker.RangePicker
             value={
               formData.startDateStr && formData.endDateStr
@@ -137,13 +138,13 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             minDate={minDate}
             maxDate={maxDate}
             disabled={isSubmitting}
-            className="w-full"
+            style={{ width: '100%' }}
             placeholder={["Alguskuupäev", "Lõppkuupäev"]}
           />
           {(errors.startDateStr || errors.endDateStr) && (
-            <p className="mt-1 text-sm text-red-600" role="alert">
+            <Typography.Text type="danger" style={{ display: 'block', marginTop: 4 }}>
               {errors.startDateStr || errors.endDateStr}
-            </p>
+            </Typography.Text>
           )}
         </div>
       </div>
