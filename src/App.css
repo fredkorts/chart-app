@@ -23,9 +23,15 @@
   min-width: 75vh;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 968px) {
   .app-container {
     flex-direction: column;
+  }
+
+  .gantt-container {
+    width: 100vw;
+    max-width: 100vw;
+    min-width: 100vw;
   }
 
 }
