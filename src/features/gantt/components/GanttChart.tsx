@@ -48,7 +48,7 @@ interface GanttChartProps {
   tasks: Task[];
   currentYear?: number;
   currentQuarter?: number;
-  onQuarterChange?: (year: number, quarter: number) => void;
+  onQuarterChange: (year: number, quarter: 1 | 2 | 3 | 4) => void;
   onAddTask?: (task: Omit<Task, 'id'>) => Promise<void> | void;
   onEditTask?: (
     taskId: string,
@@ -108,7 +108,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     const result = await onEditTask?.(selectedTask.id, updatedTask);
     if (result?.success && result.task) {
       setSelectedTask(result.task);
-      setPanelMode('details');
+      setPanelMode('chart');
     }
   }, [onEditTask, selectedTask]);
 
@@ -149,7 +149,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
               }
             }}
           >
-            {panelMode === 'chart' ? 'Add Task' : 'View Chart'}
+            {panelMode === 'chart' ? 'Lisa ülesanne' : 'Vaata graafikut'}
           </Button>
         </div>
 
@@ -212,11 +212,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           <div className="empty-state">
             <div className="empty-icon">📅</div>
             {viewMode === 'quarter' ? (
-              <h3>No tasks for Q{currentQuarter} {currentYear}</h3>
+              <h3>Aasta {currentYear} Q{currentQuarter} puuduvad ülesanded</h3>
             ) : (
-              <h3>No tasks for {currentYear}</h3>
+              <h3>Aastal {currentYear} puuduvad ülesanded</h3>
             )}
-            <p>Add some tasks to see them in the timeline.</p>
+            <p>Lisa ülesandeid, et näha neid ajakavas.</p>
           </div>
         ) : (
           <div className="gantt-body">
@@ -231,37 +231,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           </div>
         )}
       </div>
-    </div>
-  );
-};
-
-// Basic test component - using new modular approach
-export const GanttChartTest = () => {
-  const sampleTasks: Task[] = [
-    {
-      id: '1',
-      name: 'Design Phase',
-      startDate: new Date(2023, 0, 15),
-      endDate: new Date(2023, 1, 28),
-      color: '#3B82F6'
-    },
-    {
-      id: '2', 
-      name: 'Development',
-      startDate: new Date(2023, 1, 1),
-      endDate: new Date(2023, 2, 15),
-      color: '#10B981'
-    }
-  ];
-
-  return (
-    <div style={{ padding: '20px' }}>
-      <h3>Gantt Chart Test</h3>
-      <GanttChart
-        tasks={sampleTasks}
-        currentYear={2023}
-        currentQuarter={1}
-      />
     </div>
   );
 };

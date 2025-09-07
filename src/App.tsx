@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './App.css';
-import './components/tasks.css';
 
 import type { Task } from '@/types';
 import { GanttChart } from '@/features/gantt';
@@ -44,7 +43,7 @@ function App() {
     <Layout style={{ height: '100vh', width: '100vw' }}>
       <Layout className='app-container'>
         <Content>
-          <div className="gantt-container">
+            <div className="gantt-container">
             <GanttChart
               tasks={tasks}
               currentYear={year}
@@ -54,10 +53,9 @@ function App() {
               onEditTask={handleEditTask}
               onDeleteTask={handleDeleteTask}
             />
-          </div>
+            </div>
         </Content>
       </Layout>
-      <Footer>Footer</Footer>
     </Layout>
   );
 }

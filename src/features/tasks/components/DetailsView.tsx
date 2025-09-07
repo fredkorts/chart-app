@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Task } from '@/types';
-import { Descriptions, Button } from 'antd';
+import { Descriptions, Button, Flex } from 'antd';
 import { VALIDATION_MESSAGES } from '@/utils/constants';
 import { calculateDuration, formatDate, formatDurationEstonian } from '@/utils/dateUtils';
 
@@ -60,14 +60,12 @@ export const DetailsView: React.FC<DetailsViewProps> = ({ task, onEdit, onBack, 
           </Descriptions.Item>
         </Descriptions>
 
-        <div className="flex space-x-3 pt-4 border-t border-gray-200">
-          <Button type="primary" onClick={onEdit}>
-            Muuda
-          </Button>
-          <Button onClick={onBack}>Mine tagasi</Button>
-          <Button danger onClick={onDelete}>
-            Kustuta
-          </Button>
+        <div className="form-actions edit-form-actions">
+          <Flex gap="small" wrap>
+            <Button type="primary" onClick={onEdit}>Muuda</Button>
+            <Button onClick={onBack}>Mine tagasi</Button>
+            <Button danger onClick={onDelete}>Kustuta</Button>
+          </Flex>
         </div>
       </div>
     </div>

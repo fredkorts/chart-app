@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Task, TaskFormData } from '@/types';
+import '../tasks.css';
 import { parseEstonianDate } from '@/utils/dateUtils';
 import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
 import { useTaskValidation } from '../hooks/useTaskValidation';
@@ -98,7 +99,6 @@ export const TaskForm: React.FC<TaskFormProps> = ({
       {errors.general && (
         <ErrorDisplay 
           errors={[{ field: 'general', message: errors.general }]} 
-          language="et"
         />
       )}
 
