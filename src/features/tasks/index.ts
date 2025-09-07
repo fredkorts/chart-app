@@ -2,6 +2,7 @@
 export { TaskDetailsModal } from './components/TaskDetailsModal';
 export { TaskForm } from './components/TaskForm';
 export { DetailsView } from './components/DetailsView';
+export { TaskNotification } from './components/TaskNotification';
 
 // Hooks
 export { useTasks } from './hooks/useTasks';
@@ -14,5 +15,6 @@ export type {
   TaskDetailsModalProps,
   TaskFormProps,
   TaskOperationResult,
-  UseTasksOptions
+  UseTasksOptions,
 } from './types/tasks.types';
+export type { TaskNotificationRef } from './components/TaskNotification';
