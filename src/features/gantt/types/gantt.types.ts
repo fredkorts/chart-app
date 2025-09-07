@@ -10,6 +10,16 @@ export interface MonthInfo {
 }
 
 /**
+ * Week information for timeline display
+ */
+export interface WeekInfo {
+  startDate: Date;
+  endDate: Date;
+  weekNumber: number;
+  days: number; // number of days of this week within the period
+}
+
+/**
  * Timeline data containing period information and month breakdown
  */
 export interface TimelineData {
@@ -25,6 +35,7 @@ export interface TimelineData {
   startDate: Date;
   endDate: Date;
   months: MonthInfo[];
+  weeks: WeekInfo[];
 }
 
 /**

@@ -20,7 +20,8 @@ import {
   isTaskInQuarter,
   getYearStart,
   getYearEnd,
-  isTaskInYear
+  isTaskInYear,
+  getWeekNumber
 } from '../../../utils/dateUtils';
 import { ESTONIAN_MONTHS } from '../../../utils/constants';
 import type { TaskBarData, TimelineData } from '../types/gantt.types';
@@ -63,6 +64,32 @@ export const useGanttCalculations = ({
 
   // Calculate timeline data based on view mode
   const timelineData = useMemo((): TimelineData => {
+    const buildWeeks = (startDate: Date, endDate: Date) => {
+      const weeks = [] as TimelineData['weeks'];
+      const msInDay = 1000 * 60 * 60 * 24;
+      const firstWeekStart = new Date(startDate);
+      const day = firstWeekStart.getDay();
+      const diff = day === 0 ? -6 : 1 - day; // adjust to Monday
+      firstWeekStart.setDate(firstWeekStart.getDate() + diff);
+      const current = new Date(firstWeekStart);
+      while (current <= endDate) {
+        const weekStart = new Date(current);
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 6);
+        const clampedStart = weekStart < startDate ? startDate : weekStart;
+        const clampedEnd = weekEnd > endDate ? endDate : weekEnd;
+        const days = Math.floor((clampedEnd.getTime() - clampedStart.getTime()) / msInDay) + 1;
+        weeks.push({
+          startDate: weekStart,
+          endDate: weekEnd,
+          weekNumber: getWeekNumber(weekStart),
+          days
+        });
+        current.setDate(current.getDate() + 7);
+      }
+      return weeks;
+    };
+
     if (viewMode === 'year') {
       const startDate = getYearStart(currentYear);
       const endDate = getYearEnd(currentYear);
@@ -83,7 +110,8 @@ export const useGanttCalculations = ({
         mode: 'year',
         startDate,
         endDate,
-        months
+        months,
+        weeks: buildWeeks(startDate, endDate)
       };
     }
 
@@ -109,7 +137,8 @@ export const useGanttCalculations = ({
       mode: 'quarter',
       startDate,
       endDate,
-      months
+      months,
+      weeks: buildWeeks(startDate, endDate)
     };
   }, [currentYear, currentQuarter, viewMode]);
 

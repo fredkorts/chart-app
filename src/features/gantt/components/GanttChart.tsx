@@ -131,6 +131,9 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     endDateStr: formatDate(task.endDate)
   });
 
+  const totalDays = (timelineData.endDate.getTime() - timelineData.startDate.getTime()) / (1000 * 60 * 60 * 24) + 1;
+  const now = new Date();
+
   return (
     <div className={`gantt-chart ${className}`}>
       {/* Header with extracted navigation */}
@@ -174,6 +177,23 @@ export const GanttChart: React.FC<GanttChartProps> = ({
                 <span className="month-name">{month.name}</span>
               </div>
             ))}
+          </div>
+
+          <div className="timeline-weeks">
+            {timelineData.weeks.map((week) => {
+              const width = (week.days / totalDays) * 100;
+              const isCurrent = now >= week.startDate && now <= week.endDate;
+              return (
+                <div
+                  key={`week-${week.weekNumber}-${week.startDate.toISOString()}`}
+                  data-testid={`week-${week.weekNumber}`}
+                  className={`week-header${isCurrent ? ' current-week' : ''}`}
+                  style={{ width: `${width}%` }}
+                >
+                  <span className="week-number">{week.weekNumber}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
