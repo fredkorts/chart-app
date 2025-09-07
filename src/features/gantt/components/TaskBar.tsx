@@ -71,6 +71,7 @@
  */
 
 import React from 'react';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { Task } from '@/types';
 import type { TaskBarData } from '../types/gantt.types';
 
@@ -119,8 +120,8 @@ const TaskBarComponent: React.FC<TaskBarProps> = ({
       onClick={handleClick}
       title={`${task.name}\n${task.startDate.toLocaleDateString()} - ${task.endDate.toLocaleDateString()}`}
     >
-      {task.continuesLeft && <div className="continuation-left">◄</div>}
-      {task.continuesRight && <div className="continuation-right">►</div>}
+      {task.continuesLeft && <div className="continuation-left"><LeftOutlined style={{ fontSize: '12px', color: 'rgba(251, 251, 251, 1)' }} /></div>}
+      {task.continuesRight && <div className="continuation-right"><RightOutlined style={{ fontSize: '12px', color: 'rgba(255, 255, 255, 1)' }} /></div>}
       <div className="task-bar-content">
         <span className="task-bar-name">{task.name}</span>
       </div>

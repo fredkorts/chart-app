@@ -43,6 +43,12 @@ import { useGanttCalculations } from '../hooks/useGanttCalculations';
 import { TaskForm, DetailsView } from '@/features/tasks';
 import { Button, Flex, Space } from 'antd';
 import { formatDate } from '@/utils/dateUtils';
+import { 
+  GANTT_ACTIONS, 
+  GANTT_CONFIRMATIONS, 
+  GANTT_EMPTY_STATE,
+  formatEmptyStateMessage 
+} from '../constants';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -149,7 +155,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
               }
             }}
           >
-            {panelMode === 'chart' ? 'Lisa ülesanne' : 'Vaata graafikut'}
+            {panelMode === 'chart' ? GANTT_ACTIONS.ADD_TASK : GANTT_ACTIONS.VIEW_CHART}
           </Button>
         </div>
 
@@ -180,7 +186,7 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             <TaskForm
               onSubmit={handleEditSubmit}
               onCancel={() => setPanelMode('details')}
-              submitLabel="Salvesta muudatused"
+              submitLabel={GANTT_ACTIONS.SAVE_CHANGES}
               initialData={getTaskFormData(selectedTask)}
             />
           </div>
@@ -195,28 +201,24 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             onDelete={() => setPanelMode('confirm-delete')}
           />
         ) : panelMode === 'confirm-delete' && selectedTask ? (
-          <div className="gantt-body task-details-view">
+          <div className="gantt-body task-delete-confirm">
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-              <p style={{ textAlign: 'center' }}>Kas soovite kustutada selle ülesande?</p>
+              <p style={{ textAlign: 'center' }}>{GANTT_CONFIRMATIONS.DELETE_TASK_QUESTION}</p>
               <Flex gap="small" justify="center" style={{ paddingTop: 16 }}>
                 <Button onClick={() => { setSelectedTask(null); setPanelMode('chart'); }}>
-                  Ei
+                  {GANTT_ACTIONS.NO}
                 </Button>
                 <Button danger onClick={handleDeleteConfirm}>
-                  Jah
+                  {GANTT_ACTIONS.YES}
                 </Button>
               </Flex>
             </Space>
           </div>
         ) : quarterTasks.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-icon">📅</div>
-            {viewMode === 'quarter' ? (
-              <h3>Aasta {currentYear} Q{currentQuarter} puuduvad ülesanded</h3>
-            ) : (
-              <h3>Aastal {currentYear} puuduvad ülesanded</h3>
-            )}
-            <p>Lisa ülesandeid, et näha neid ajakavas.</p>
+            <div className="empty-icon">{GANTT_EMPTY_STATE.EMPTY_ICON}</div>
+            <h3>{formatEmptyStateMessage(currentYear, currentQuarter, viewMode)}</h3>
+            <p>{GANTT_EMPTY_STATE.ADD_TASKS_PROMPT}</p>
           </div>
         ) : (
           <div className="gantt-body">

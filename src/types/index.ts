@@ -6,14 +6,6 @@ export interface Task {
   color?: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export type Partial<Task> = {
-  id?: string;
-  name?: string; 
-  startDate?: Date;
-  endDate?: Date;
-}
-
 export interface ValidationError {
   field: string;
   message: string;

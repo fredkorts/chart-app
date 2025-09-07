@@ -1,5 +1,6 @@
-import React, { forwardRef, useImperativeHandle } from 'react';
+import { forwardRef, useImperativeHandle } from 'react';
 import { notification } from 'antd';
+import { TASKS_NOTIFICATIONS } from '../constants';
 
 export interface TaskNotificationRef {
   showAdd: () => void;
@@ -13,21 +14,21 @@ export const TaskNotification = forwardRef<TaskNotificationRef>((_, ref) => {
   useImperativeHandle(ref, () => ({
     showAdd: () => {
       api.success({
-        message: 'Lisasite uue ülesande',
+        message: TASKS_NOTIFICATIONS.TASK_ADDED,
         placement: 'topRight',
         duration: 5,
       });
     },
     showDelete: (taskName: string) => {
       api.warning({
-        message: `Kustutasite ülesande ${taskName}`,
+        message: `${TASKS_NOTIFICATIONS.TASK_DELETED} ${taskName}`,
         placement: 'topRight',
         duration: 5,
       });
     },
     showUpdate: () => {
       api.info({
-        message: 'Muutsite ülesande',
+        message: TASKS_NOTIFICATIONS.TASK_UPDATED,
         placement: 'topRight',
         duration: 5,
       });

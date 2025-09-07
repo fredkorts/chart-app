@@ -46,6 +46,7 @@ import '../gantt.css';
 import { useQuarterNavigation } from '../hooks/useQuarterNavigation';
 import { Button, Segmented } from 'antd';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { GANTT_NAVIGATION, GANTT_VIEW_MODES, formatQuarterDisplay } from '../constants';
 
 interface QuarterNavigationProps {
   currentYear: number;
@@ -139,15 +140,13 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
         icon={<LeftOutlined />}
         onClick={handlePrevious}
         disabled={disabled || (viewMode === 'quarter' && !canGoBack)}
-        aria-label={viewMode === 'quarter' ? 'Eelmine kvartal' : 'Eelmine aasta'}
+        aria-label={viewMode === 'quarter' ? GANTT_NAVIGATION.PREVIOUS_QUARTER : GANTT_NAVIGATION.PREVIOUS_YEAR}
       >
       </Button>
 
       <div className="quarter-label">
         <h2>
-          {viewMode === 'quarter'
-            ? `Q${currentQuarter} ${currentYear}`
-            : `${currentYear}`}
+          {formatQuarterDisplay(currentQuarter, currentYear, viewMode)}
         </h2>
       </div>
 
@@ -156,12 +155,12 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
         icon={<RightOutlined />}
         onClick={handleNext}
         disabled={disabled || (viewMode === 'quarter' && !canGoForward)}
-        aria-label={viewMode === 'quarter' ? 'Järgmine kvartal' : 'Järgmine aasta'}
+        aria-label={viewMode === 'quarter' ? GANTT_NAVIGATION.NEXT_QUARTER : GANTT_NAVIGATION.NEXT_YEAR}
         >
       </Button>
 
       <Segmented
-        options={['Kvartal', 'Aasta']}
+        options={[GANTT_VIEW_MODES.QUARTER_OPTION, GANTT_VIEW_MODES.YEAR_OPTION]}
         disabled={disabled}
         onChange={() => {
           onViewModeChange?.(viewMode === 'quarter' ? 'year' : 'quarter')
@@ -175,7 +174,7 @@ export const QuarterNavigation: React.FC<QuarterNavigationProps> = ({
           onClick={handleToday}
           disabled={disabled}
         >
-          Täna
+          {GANTT_NAVIGATION.TODAY}
         </Button>
       )}
     </div>

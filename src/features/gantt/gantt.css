@@ -118,6 +118,7 @@
   border-radius: 4px;
   cursor: pointer;
   overflow: hidden;
+  padding: 0 0.8rem;
 }
 
 .task-bar.hovered {
@@ -129,6 +130,10 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.task-delete-confirm {
+  margin-top: 5rem;
 }
 
 .continuation-left,

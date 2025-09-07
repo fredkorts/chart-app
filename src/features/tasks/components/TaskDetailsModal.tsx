@@ -15,6 +15,14 @@ import {
   Space
 } from 'antd';
 import type { TaskDetailsModalProps, ModalMode } from '../types/tasks.types';
+import { 
+  TASKS_LABELS, 
+  TASKS_ACTIONS, 
+  TASKS_MODAL_TITLES, 
+  TASKS_CONFIRMATIONS,
+  formatDeleteConfirmation,
+  formatTaskColorAria 
+} from '../constants';
 
 export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   task,
@@ -62,15 +70,20 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
     setError(null);
 
     try {
-      const result = await onEdit(task.id, updatedTaskData);
+      const updatedTask = { ...updatedTaskData, id: task.id };
+      const result = await onEdit(updatedTask);
       
-      if (result.success) {
-        setMode('view');
-      } else if (result.errors) {
-        // Let the form handle validation errors
-        setError(VALIDATION_MESSAGES.VALIDATION_FAILED);
+      if (result && typeof result === 'object' && 'success' in result) {
+        if (result.success) {
+          setMode('view');
+        } else if (result.errors) {
+          // Let the form handle validation errors
+          setError(VALIDATION_MESSAGES.VALIDATION_FAILED);
+        } else {
+          setError(VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
+        }
       } else {
-        setError(VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
+        setMode('view'); // Assume success if no result object
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : VALIDATION_MESSAGES.UPDATE_TASK_FAILED);
@@ -89,10 +102,14 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
     try {
       const result = await onDelete(task.id);
       
-      if (result.success) {
-        onClose();
+      if (result && typeof result === 'object' && 'success' in result) {
+        if (result.success) {
+          onClose();
+        } else {
+          setError(VALIDATION_MESSAGES.DELETE_TASK_FAILED);
+        }
       } else {
-        setError(VALIDATION_MESSAGES.DELETE_TASK_FAILED);
+        onClose(); // Assume success if no result object
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : VALIDATION_MESSAGES.DELETE_TASK_FAILED);
@@ -116,13 +133,13 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
   const getModalTitle = () => {
     switch (mode) {
       case 'view':
-        return 'Ülesande detailid';
+        return TASKS_MODAL_TITLES.TASK_DETAILS;
       case 'edit':
-        return 'Muuda ülesannet';
+        return TASKS_MODAL_TITLES.EDIT_TASK;
       case 'confirm-delete':
-        return 'Kinnita kustutamine';
+        return TASKS_MODAL_TITLES.CONFIRM_DELETE;
       default:
-        return 'Ülesanne';
+        return TASKS_MODAL_TITLES.TASK;
     }
   };
 
@@ -164,27 +181,27 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
           {mode === 'view' && (
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <Descriptions column={1} bordered>
-                <Descriptions.Item label="Ülesande nimi">{task.name}</Descriptions.Item>
-                <Descriptions.Item label="Värv">
+                <Descriptions.Item label={TASKS_LABELS.TASK_NAME}>{task.name}</Descriptions.Item>
+                <Descriptions.Item label={TASKS_LABELS.COLOR}>
                   <Flex align="center" gap="small">
                     <div
                       style={{ width: 16, height: 16, borderRadius: 4, border: '1px solid #d1d5db', backgroundColor: task.color }}
-                      aria-label={`Ülesande värv: ${task.color}`}
+                      aria-label={formatTaskColorAria(task.color || '#000000')}
                     />
                     <Typography.Text type="secondary">{task.color}</Typography.Text>
                   </Flex>
                 </Descriptions.Item>
-                <Descriptions.Item label="Alguskuupäev">{formatDate(task.startDate)}</Descriptions.Item>
-                <Descriptions.Item label="Lõppkuupäev">{formatDate(task.endDate)}</Descriptions.Item>
-                <Descriptions.Item label="Kestus">
+                <Descriptions.Item label={TASKS_LABELS.START_DATE}>{formatDate(task.startDate)}</Descriptions.Item>
+                <Descriptions.Item label={TASKS_LABELS.END_DATE}>{formatDate(task.endDate)}</Descriptions.Item>
+                <Descriptions.Item label={TASKS_LABELS.DURATION}>
                   {formatDurationEstonian(calculateDuration(task.startDate, task.endDate))}
                 </Descriptions.Item>
-                <Descriptions.Item label="Staatus">
+                <Descriptions.Item label={TASKS_LABELS.STATUS}>
                   <Tag color={getTaskStatus(task.startDate, task.endDate).color}>
                     {getTaskStatus(task.startDate, task.endDate).status}
                   </Tag>
                 </Descriptions.Item>
-                <Descriptions.Item label="Ülesande ID">
+                <Descriptions.Item label={TASKS_LABELS.TASK_ID}>
                   <Typography.Text type="secondary" code>{task.id}</Typography.Text>
                 </Descriptions.Item>
               </Descriptions>
@@ -196,14 +213,14 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
                     onClick={() => setMode('edit')}
                     disabled={isLoading}
                   >
-                    Muuda
+                    {TASKS_ACTIONS.EDIT}
                   </Button>
                   <Button
                     danger
                     onClick={() => setMode('confirm-delete')}
                     disabled={isLoading}
                   >
-                    Kustuta
+                    {TASKS_ACTIONS.DELETE}
                   </Button>
                 </Flex>
               )}
@@ -214,7 +231,7 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
             <TaskForm
               onSubmit={handleEditTask}
               initialData={getTaskFormData()}
-              submitLabel="Salvesta muudatused"
+              submitLabel={TASKS_ACTIONS.SAVE_CHANGES}
               onCancel={() => setMode('view')}
             />
           )}
@@ -223,19 +240,19 @@ export const TaskDetailsModal: React.FC<TaskDetailsModalProps> = ({
             <Space direction="vertical" size="middle" style={{ width: '100%' }}>
               <div style={{ textAlign: 'center' }}>
                 <Typography.Paragraph>
-                  Kas olete kindel, et soovite kustutada ülesande <strong>"{task.name}"</strong>?
+                  {formatDeleteConfirmation(task.name)}
                 </Typography.Paragraph>
                 <Typography.Paragraph type="danger">
-                  Seda toimingut ei saa tagasi võtta.
+                  {TASKS_CONFIRMATIONS.CANNOT_UNDO}
                 </Typography.Paragraph>
               </div>
 
               <Flex gap="small" justify="center" style={{ paddingTop: 16 }}>
                 <Button onClick={() => setMode('view')} disabled={isLoading}>
-                  Tühista
+                  {TASKS_ACTIONS.CANCEL}
                 </Button>
                 <Button danger onClick={handleDeleteTask} disabled={isLoading}>
-                  {isLoading ? 'Kustutan...' : 'Jah, kustuta'}
+                  {isLoading ? TASKS_ACTIONS.DELETING : TASKS_ACTIONS.YES_DELETE}
                 </Button>
               </Flex>
             </Space>

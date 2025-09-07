@@ -9,6 +9,7 @@ import { DatePicker, Button, Input, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import type { TaskFormProps, TaskValidationErrors } from '../types/tasks.types';
+import { TASKS_PLACEHOLDERS, TASKS_ACTIONS } from '../constants';
 
 dayjs.extend(customParseFormat);
 
@@ -109,7 +110,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             id="taskName"
             value={formData.name}
             onChange={handleInputChange('name')}
-            placeholder="Sisestage ülesande nimi"
+            placeholder={TASKS_PLACEHOLDERS.ENTER_TASK_NAME}
             disabled={isSubmitting}
             maxLength={100}
             autoComplete="off"
@@ -139,7 +140,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             maxDate={maxDate}
             disabled={isSubmitting}
             style={{ width: '100%' }}
-            placeholder={["Alguskuupäev", "Lõppkuupäev"]}
+            placeholder={[TASKS_PLACEHOLDERS.START_DATE_PLACEHOLDER, TASKS_PLACEHOLDERS.END_DATE_PLACEHOLDER]}
           />
           {(errors.startDateStr || errors.endDateStr) && (
             <Typography.Text type="danger" style={{ display: 'block', marginTop: 4 }}>
@@ -157,7 +158,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
             onClick={onCancel}
             disabled={isSubmitting}
           >
-            Tühista
+            {TASKS_ACTIONS.CANCEL}
           </Button>
         )}
         <Button
@@ -165,7 +166,7 @@ export const TaskForm: React.FC<TaskFormProps> = ({
           type="primary"
           disabled={isSubmitting}
         >
-          {isSubmitting ? 'Salvestamine...' : submitLabel}
+          {isSubmitting ? TASKS_ACTIONS.SAVING : submitLabel}
         </Button>
       </div>
     </form>

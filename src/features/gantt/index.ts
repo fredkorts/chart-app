@@ -11,3 +11,6 @@ export type {
   TaskBarData, 
   MonthInfo 
 } from './types/gantt.types';
+
+// Export string constants
+export * from './constants';
