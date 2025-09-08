@@ -2,6 +2,7 @@
 export { TaskForm } from './components/TaskForm';
 export { DetailsView } from './components/DetailsView';
 export { TaskNotification } from './components/TaskNotification';
+export { TaskPanel } from './components/TaskPanel';
 
 // Hooks
 export { useTasks } from './hooks/useTasks';

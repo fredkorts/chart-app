@@ -39,12 +39,13 @@ import '../gantt.css';
 import type { Task } from '../../../types';
 import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';
-import { TaskPanel } from './TaskPanel.tsx';
+import { TaskPanel } from '../../tasks';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
 import { Button } from 'antd';
 import { 
   GANTT_ACTIONS,
   GANTT_EMPTY_STATE,
+  GANTT_CONFIRMATIONS,
   formatEmptyStateMessage
 } from '../constants';
 
@@ -214,6 +215,11 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             }}
             onEditClick={() => setPanelMode('edit')}
             onDeleteClick={() => setPanelMode('confirm-delete')}
+            addTaskLabel={GANTT_ACTIONS.ADD_TASK}
+            saveChangesLabel={GANTT_ACTIONS.SAVE_CHANGES}
+            yesLabel={GANTT_ACTIONS.YES}
+            noLabel={GANTT_ACTIONS.NO}
+            deleteConfirmationMessage={GANTT_CONFIRMATIONS.DELETE_TASK_QUESTION}
           />
         ) : quarterTasks.length === 0 ? (
           <div className="empty-state">
