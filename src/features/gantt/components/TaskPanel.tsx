@@ -1,17 +1,15 @@
 import React from 'react';
 import type { Task } from '../../../types';
 import { TaskForm, DetailsView } from '../../tasks';
-import { Button, Flex, Space } from 'antd';
 import { formatDate } from '../../../utils/dateUtils';
-import { GANTT_ACTIONS, GANTT_CONFIRMATIONS } from '../constants';
+import { GANTT_ACTIONS } from '../constants';
 
 interface TaskPanelProps {
-  mode: 'add' | 'edit' | 'details' | 'confirm-delete' | 'chart';
+  mode: 'add' | 'edit' | 'details';
   task: Task | null;
   onAdd?: (task: Omit<Task, 'id'>) => Promise<void> | void;
   onEdit?: (task: Omit<Task, 'id'>) => Promise<void> | void;
-  onDelete?: () => Promise<void> | void;
-  onCancel?: () => void; // Used for add form cancel and delete confirmation cancel
+  onCancel?: () => void; // Used for add form cancel
   onCancelEdit?: () => void; // Used for edit form cancel
   onBack?: () => void; // Used for details back to chart
   onEditClick?: () => void; // Used for details edit button
@@ -29,7 +27,6 @@ export const TaskPanel: React.FC<TaskPanelProps> = ({
   task,
   onAdd,
   onEdit,
-  onDelete,
   onCancel,
   onCancelEdit,
   onBack,
@@ -69,20 +66,6 @@ export const TaskPanel: React.FC<TaskPanelProps> = ({
         onBack={onBack!}
         onDelete={onDeleteClick!}
       />
-    );
-  }
-
-  if (mode === 'confirm-delete' && task) {
-    return (
-      <div className="gantt-body task-delete-confirm">
-        <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-          <p style={{ textAlign: 'center' }}>{GANTT_CONFIRMATIONS.DELETE_TASK_QUESTION}</p>
-          <Flex gap="small" justify="center" style={{ paddingTop: 16 }}>
-            <Button onClick={onCancel}>{GANTT_ACTIONS.NO}</Button>
-            <Button danger onClick={onDelete}>{GANTT_ACTIONS.YES}</Button>
-          </Flex>
-        </Space>
-      </div>
     );
   }
 
