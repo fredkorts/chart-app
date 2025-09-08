@@ -101,6 +101,11 @@
   overflow: hidden;
 }
 
+.toggle-view-button {
+  display: inline-flex;
+  align-items: center;
+}
+
 .gantt-body {
   position: relative;
 }
@@ -216,4 +221,3 @@
     min-width: 1000px;
   }
 }
-

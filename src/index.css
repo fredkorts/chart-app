@@ -86,3 +86,35 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+
+/* Responsive Toggle Button Styles */
+.toggle-view-button {
+  transition: all 0.3s ease;
+}
+
+.toggle-view-button-float {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+}
+
+.toggle-view-button-float:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 499px) {
+  .toggle-view-button.desktop {
+    display: none !important;
+  }
+
+  .ant-picker-panels {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (min-width: 500px) {
+  .toggle-view-button.mobile {
+    display: none !important;
+  }
+}
