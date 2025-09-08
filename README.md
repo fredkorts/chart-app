@@ -1,5 +1,7 @@
 # Chart Application
 
+Live demo: http://www.gantt-task.com
+
 ## Application Overview
 
 This project is a React + TypeScript based task management dashboard that allows users to easily plan, visualize, and manage their work on a quarter-based timeline. The application provides a clear, interactive chart where tasks are displayed as horizontal bars, making it easy to see schedules, overlaps, and deadlines at a glance.
@@ -13,6 +15,8 @@ This project is a React + TypeScript based task management dashboard that allows
 **Quarter Navigation** – Simple arrow buttons let users switch between previous and next quarters, updating the chart and visible tasks accordingly.
 
 **Task Details** – Clicking a task opens a view with detailed information.
+
+**Light/Dark Mode** – Users can switch between light and dark themes for comfortable viewing.
 
 **Responsive Design** – Optimized for both desktop and mobile. On smaller screens, form fields stack vertically and the timeline scrolls horizontally for easy access.
 
