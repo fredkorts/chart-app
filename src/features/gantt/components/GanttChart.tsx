@@ -39,15 +39,13 @@ import '../gantt.css';
 import type { Task } from '../../../types';
 import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';
+import { TaskPanel } from './TaskPanel';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
-import { TaskForm, DetailsView } from '@/features/tasks';
-import { Button, Flex, Space } from 'antd';
-import { formatDate } from '@/utils/dateUtils';
+import { Button } from 'antd';
 import { 
-  GANTT_ACTIONS, 
-  GANTT_CONFIRMATIONS, 
+  GANTT_ACTIONS,
   GANTT_EMPTY_STATE,
-  formatEmptyStateMessage 
+  formatEmptyStateMessage
 } from '../constants';
 
 interface GanttChartProps {
@@ -125,12 +123,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
     setPanelMode('chart');
   }, [onDeleteTask, selectedTask]);
 
-  const getTaskFormData = (task: Task) => ({
-    name: task.name,
-    startDateStr: formatDate(task.startDate),
-    endDateStr: formatDate(task.endDate)
-  });
-
   const totalDays = (timelineData.endDate.getTime() - timelineData.startDate.getTime()) / (1000 * 60 * 60 * 24) + 1;
   const now = new Date();
 
@@ -198,47 +190,31 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           </div>
         </div>
 
-        {panelMode === 'add' ? (
-          <div className="gantt-body task-form-view">
-            <TaskForm
-              onSubmit={handleAddTask}
-              onCancel={() => setPanelMode('chart')}
-              submitLabel={GANTT_ACTIONS.ADD_TASK}
-            />
-          </div>
-        ) : panelMode === 'edit' && selectedTask ? (
-          <div className="gantt-body task-form-view">
-            <TaskForm
-              onSubmit={handleEditSubmit}
-              onCancel={() => setPanelMode('details')}
-              submitLabel={GANTT_ACTIONS.SAVE_CHANGES}
-              initialData={getTaskFormData(selectedTask)}
-            />
-          </div>
-        ) : panelMode === 'details' && selectedTask ? (
-          <DetailsView
+        {panelMode !== 'chart' ? (
+          <TaskPanel
+            mode={panelMode}
             task={selectedTask}
-            onEdit={() => setPanelMode('edit')}
+            onAdd={handleAddTask}
+            onEdit={handleEditSubmit}
+            onDelete={handleDeleteConfirm}
+            onCancel={
+              panelMode === 'add'
+                ? () => setPanelMode('chart')
+                : panelMode === 'confirm-delete'
+                  ? () => {
+                      setSelectedTask(null);
+                      setPanelMode('chart');
+                    }
+                  : undefined
+            }
+            onCancelEdit={panelMode === 'edit' ? () => setPanelMode('details') : undefined}
             onBack={() => {
               setSelectedTask(null);
               setPanelMode('chart');
             }}
-            onDelete={() => setPanelMode('confirm-delete')}
+            onEditClick={() => setPanelMode('edit')}
+            onDeleteClick={() => setPanelMode('confirm-delete')}
           />
-        ) : panelMode === 'confirm-delete' && selectedTask ? (
-          <div className="gantt-body task-delete-confirm">
-            <Space direction="vertical" size="middle" style={{ width: '100%' }}>
-              <p style={{ textAlign: 'center' }}>{GANTT_CONFIRMATIONS.DELETE_TASK_QUESTION}</p>
-              <Flex gap="small" justify="center" style={{ paddingTop: 16 }}>
-                <Button onClick={() => { setSelectedTask(null); setPanelMode('chart'); }}>
-                  {GANTT_ACTIONS.NO}
-                </Button>
-                <Button danger onClick={handleDeleteConfirm}>
-                  {GANTT_ACTIONS.YES}
-                </Button>
-              </Flex>
-            </Space>
-          </div>
         ) : quarterTasks.length === 0 ? (
           <div className="empty-state">
             <div className="empty-icon">{GANTT_EMPTY_STATE.EMPTY_ICON}</div>
