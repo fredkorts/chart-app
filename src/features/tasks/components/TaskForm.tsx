@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import type { Task, TaskFormData } from '@/types';
+import type { Task, TaskFormData } from '../../../types';
 import '../tasks.css';
-import { parseEstonianDate } from '@/utils/dateUtils';
-import { getTaskColor, VALIDATION_MESSAGES } from '@/utils/constants';
+import { parseEstonianDate } from '../../../utils/dateUtils';
+import { getTaskColor, VALIDATION_MESSAGES } from '../../../utils/constants';
 import { useTaskValidation } from '../hooks/useTaskValidation';
-import { ErrorDisplay } from '@/components';
+import { ErrorDisplay } from '../../../components';
 import { DatePicker, Button, Input, Typography } from 'antd';
 import dayjs, { Dayjs } from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';

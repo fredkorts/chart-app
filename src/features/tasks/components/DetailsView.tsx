@@ -1,8 +1,8 @@
 import React from 'react';
-import type { Task } from '@/types';
+import type { Task } from '../../../types';
 import { Descriptions, Button, Flex, Tag, Typography } from 'antd';
-import { VALIDATION_MESSAGES } from '@/utils/constants';
-import { calculateDuration, formatDate, formatDurationEstonian } from '@/utils/dateUtils';
+import { VALIDATION_MESSAGES } from '../../../utils/constants';
+import { calculateDuration, formatDate, formatDurationEstonian } from '../../../utils/dateUtils';
 import { TASKS_LABELS, TASKS_ACTIONS, formatTaskColorAria } from '../constants';
 
 interface DetailsViewProps {

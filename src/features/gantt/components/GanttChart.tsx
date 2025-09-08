@@ -42,7 +42,8 @@ import { Timeline } from './Timeline';
 import { TaskPanel } from '../../tasks';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
 import { Button } from 'antd';
-import { 
+import { DeleteConfirmation } from '../../../components';
+import {
   GANTT_ACTIONS,
   GANTT_EMPTY_STATE,
   GANTT_CONFIRMATIONS,
@@ -191,23 +192,26 @@ export const GanttChart: React.FC<GanttChartProps> = ({
           </div>
         </div>
 
-        {panelMode !== 'chart' ? (
+        {panelMode === 'confirm-delete' ? (
+          <div className="gantt-body task-delete-confirm">
+            <DeleteConfirmation
+              message={GANTT_CONFIRMATIONS.DELETE_TASK_QUESTION}
+              onConfirm={handleDeleteConfirm}
+              onCancel={() => {
+                setSelectedTask(null);
+                setPanelMode('chart');
+              }}
+              confirmLabel={GANTT_ACTIONS.YES}
+              cancelLabel={GANTT_ACTIONS.NO}
+            />
+          </div>
+        ) : panelMode !== 'chart' ? (
           <TaskPanel
-            mode={panelMode}
+            mode={panelMode as 'add' | 'details' | 'edit'}
             task={selectedTask}
             onAdd={handleAddTask}
             onEdit={handleEditSubmit}
-            onDelete={handleDeleteConfirm}
-            onCancel={
-              panelMode === 'add'
-                ? () => setPanelMode('chart')
-                : panelMode === 'confirm-delete'
-                  ? () => {
-                      setSelectedTask(null);
-                      setPanelMode('chart');
-                    }
-                  : undefined
-            }
+            onCancel={panelMode === 'add' ? () => setPanelMode('chart') : undefined}
             onCancelEdit={panelMode === 'edit' ? () => setPanelMode('details') : undefined}
             onBack={() => {
               setSelectedTask(null);
@@ -215,11 +219,6 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             }}
             onEditClick={() => setPanelMode('edit')}
             onDeleteClick={() => setPanelMode('confirm-delete')}
-            addTaskLabel={GANTT_ACTIONS.ADD_TASK}
-            saveChangesLabel={GANTT_ACTIONS.SAVE_CHANGES}
-            yesLabel={GANTT_ACTIONS.YES}
-            noLabel={GANTT_ACTIONS.NO}
-            deleteConfirmationMessage={GANTT_CONFIRMATIONS.DELETE_TASK_QUESTION}
           />
         ) : quarterTasks.length === 0 ? (
           <div className="empty-state">
