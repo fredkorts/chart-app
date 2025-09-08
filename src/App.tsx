@@ -6,6 +6,7 @@ import { GanttChart } from '@/features/gantt';
 import { useTasks, TaskNotification } from '@/features/tasks';
 import type { TaskNotificationRef } from '@/features/tasks';
 import { Layout, ConfigProvider, theme } from 'antd';
+import { ThemeToggle } from './components/common/ThemeToggle';
 
 const { Content } = Layout;
 
@@ -66,12 +67,10 @@ function App() {
     >
       <Layout style={{ height: '100vh', width: '100vw', position: 'relative' }}>
         <TaskNotification ref={notificationRef} />
-        <button
-          className="theme-toggle"
-          onClick={() => setDarkMode(prev => !prev)}
-        >
-          {darkMode ? 'Dark Mode' : 'Light Mode'}
-        </button>
+        <ThemeToggle
+          darkMode={darkMode}
+          onToggle={() => setDarkMode(prev => !prev)}
+        />
         <Layout className='app-container'>
           <Content>
             <div className="gantt-container">
