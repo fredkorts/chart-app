@@ -42,9 +42,17 @@ describe('GanttChart', () => {
     expect(baseProps.onQuarterChange).toHaveBeenCalledWith(2024, 2);
   });
 
-  it('shows task form when add task is clicked', () => {
+  it('toggles between chart view and add task form', () => {
     render(<GanttChart {...baseProps} />);
-    fireEvent.click(screen.getByText(GANTT_ACTIONS.ADD_TASK));
+    const addButtons = screen
+      .getAllByRole('button')
+      .filter((btn) => btn.textContent?.includes(GANTT_ACTIONS.ADD_TASK));
+    fireEvent.click(addButtons[0]);
     expect(screen.getByText(GANTT_ACTIONS.ADD_TASK)).toBeInTheDocument();
+    const viewButtons = screen
+      .getAllByRole('button')
+      .filter((btn) => btn.textContent?.includes(GANTT_ACTIONS.VIEW_CHART));
+    fireEvent.click(viewButtons[0]);
+    expect(screen.getByText('Jaanuar')).toBeInTheDocument();
   });
 });

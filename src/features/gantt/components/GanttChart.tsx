@@ -41,7 +41,6 @@ import { QuarterNavigation } from './QuarterNavigation';
 import { Timeline } from './Timeline';
 import { TaskPanel } from '../../tasks';
 import { useGanttCalculations } from '../hooks/useGanttCalculations';
-import { Button } from 'antd';
 import { DeleteConfirmation } from '../../../components';
 import {
   GANTT_ACTIONS,
@@ -49,6 +48,7 @@ import {
   GANTT_CONFIRMATIONS,
   formatEmptyStateMessage
 } from '../constants';
+import { ToggleTaskButton } from './ToggleTaskButton';
 
 interface GanttChartProps {
   tasks: Task[];
@@ -141,10 +141,9 @@ export const GanttChart: React.FC<GanttChartProps> = ({
             onQuarterChange={handleQuarterChange}
             disabled={panelMode !== 'chart'}
           />
-          <Button
-            htmlType="button"
-            icon={panelMode === 'chart' ? '+' : '×'}
-            onClick={() => {
+          <ToggleTaskButton
+            panelMode={panelMode}
+            onToggle={() => {
               if (panelMode === 'chart') {
                 setPanelMode('add');
               } else {
@@ -152,14 +151,25 @@ export const GanttChart: React.FC<GanttChartProps> = ({
                 setSelectedTask(null);
               }
             }}
-          >
-            {panelMode === 'chart' ? GANTT_ACTIONS.ADD_TASK : GANTT_ACTIONS.VIEW_CHART}
-          </Button>
+            className="desktop"
+          />
         </div>
       </div>
 
       {/* Chart content */}
       <div className={`gantt-content ${viewMode === 'year' ? 'year-view' : ''}`}>
+        <ToggleTaskButton
+          panelMode={panelMode}
+          onToggle={() => {
+            if (panelMode === 'chart') {
+              setPanelMode('add');
+            } else {
+              setPanelMode('chart');
+              setSelectedTask(null);
+            }
+          }}
+          className="mobile"
+        />
         {/* Timeline months header */}
         <div className="timeline-header">
           <div className="timeline-months">

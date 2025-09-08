@@ -101,6 +101,15 @@
   overflow: hidden;
 }
 
+.toggle-task-button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggle-task-button.mobile {
+  display: none;
+}
+
 .gantt-body {
   position: relative;
 }
@@ -214,6 +223,20 @@
   .gantt-content.year-view .timeline-header,
   .gantt-content.year-view .gantt-body {
     min-width: 1000px;
+  }
+}
+
+@media (max-width: 600px) {
+  .toggle-task-button.desktop {
+    display: none;
+  }
+
+  .toggle-task-button.mobile {
+    display: block;
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 10;
   }
 }
 
