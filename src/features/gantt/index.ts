@@ -2,6 +2,7 @@ export { GanttChart } from './components/GanttChart';
 export { QuarterNavigation } from './components/QuarterNavigation';
 export { TaskBar } from './components/TaskBar';
 export { Timeline } from './components/Timeline';
+export { TaskPanel } from './components/TaskPanel';
 export { useGanttCalculations } from './hooks/useGanttCalculations';
 export { useQuarterNavigation } from './hooks/useQuarterNavigation';
 
