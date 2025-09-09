@@ -1,26 +1,3 @@
-/**
- * Gantt Feature String Constants
- * 
- * Centralized string constants for the Gantt chart feature components.
- * All user-facing text in Estonian for consistency across the application.
- * 
- * This file contains all text strings used in the gantt feature components:
- * - Navigation labels and ARIA descriptions
- * - Action button text
- * - Empty state messages
- * - Confirmation dialogs
- * - View mode options
- * 
- * Usage:
- * import { GANTT_ACTIONS, GANTT_NAVIGATION } from '../constants';
- * 
- * Benefits:
- * - Centralized translation management
- * - Consistent terminology across components
- * - Easy maintenance and updates
- * - Type safety with const assertions
- */
-
 // Navigation strings
 export const GANTT_NAVIGATION = {
   PREVIOUS_QUARTER: 'Eelmine kvartal',

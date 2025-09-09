@@ -1,17 +1,3 @@
-/**
- * useGanttCalculations Hook
- * 
- * A custom React hook that handles all the complex calculations required for rendering
- * a Gantt chart. This hook encapsulates the positioning logic, overlap resolution,
- * and timeline calculations that are currently embedded in the GanttChart component.
- * 
- * Purpose:
- * - Extract calculation logic from UI components for better separation of concerns
- * - Provide reusable positioning calculations for different Gantt chart views
- * - Optimize performance through memoization of expensive calculations
- * - Enable easier testing of calculation logic in isolation
- */
-
 import { useMemo } from 'react';
 import type { Task } from '../../../types';
 import {

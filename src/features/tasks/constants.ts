@@ -1,27 +1,3 @@
-/**
- * Tasks Feature String Constants
- * 
- * Centralized string constants for the Tasks feature components.
- * All user-facing text in Estonian for consistency across the application.
- * 
- * This file contains all text strings used in the tasks feature components:
- * - Form labels and placeholders
- * - Button text and actions
- * - Modal titles and messages
- * - Notification messages
- * - Field labels and descriptions
- * - Status messages
- * 
- * Usage:
- * import { TASKS_LABELS, TASKS_ACTIONS } from '../constants';
- * 
- * Benefits:
- * - Centralized translation management
- * - Consistent terminology across components
- * - Easy maintenance and updates
- * - Type safety with const assertions
- */
-
 // Form field labels and placeholders
 export const TASKS_LABELS = {
   TASK_NAME: 'Ülesande nimi',

@@ -1,39 +1,3 @@
-/**
- * GanttChart Component
- * 
- * A quarterly Gantt chart visualization for displaying and managing tasks across a timeline.
- * This component provides an interactive quarterly view of tasks with the following features:
- * 
- * Core Functionality:
- * - Displays tasks as horizontal bars positioned by their start/end dates
- * - Shows a quarterly timeline (3 months at a time) with Estonian month names
- * - Handles quarter navigation (Previous/Next) with automatic year transitions
- * - Filters tasks to show only those that overlap with the current quarter
- * 
- * Visual Features:
- * - Task overlap handling: overlapping tasks are automatically arranged in separate rows
- * - Partial task indicators: shows when tasks extend beyond the current quarter view
- * - Continuation arrows: visual indicators for tasks that continue left/right of quarter
- * - Interactive hover states and click handling for task selection
- * - Empty state display when no tasks exist for the current quarter
- * 
- * Layout Structure:
- * - Header: Quarter navigation and month labels
- * - Content: Two-column layout with task names on left, timeline visualization on right
- * - Task bars: Positioned as percentages of quarter duration, with minimum 1% width
- * 
- * Data Processing Logic:
- * 1. Filters tasks that overlap with current quarter using existing date utilities
- * 2. Calculates task bar positions as percentages of quarter timeline
- * 3. Handles overlapping tasks by assigning them to different visual rows
- * 4. Clamps task display dates to quarter boundaries while preserving continuation indicators
- * 
- * Integration:
- * - Uses existing Task type and date utilities from the project
- * - Leverages Estonian localization constants for month names
- * - Follows established project patterns for component structure and styling
- */
-
 import React, { useCallback, useState } from 'react';
 import '../gantt.css';
 import type { Task } from '../../../types';
